@@ -1,79 +1,124 @@
-
 import 'package:flutter/material.dart';
 
-class MajlisgramHome extends StatelessWidget {
-  const MajlisgramHome({super.key});
+class MajlisgramHome extends StatefulWidget {
+  const MajlisgramHome({Key? key}) : super(key: key);
+
+  @override
+  _MajlisgramHomeState createState() => _MajlisgramHomeState();
+}
+
+class _MajlisgramHomeState extends State<MajlisgramHome> {
+  int _selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
+    return Scaffold(
       appBar: AppBar(
         title: Text("MajlisGram"),
       ),
-
-      body: Column(
-        children: [
-          //above section
-           Expanded(
-            flex: 2,
-            child: Container(
-              color: Colors.blue, // Change color as needed
-              child: Center(
-                child: Text(
-                  'Above Section',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ),
+      body: _getBody(_selectedIndex),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
           ),
-          Divider(),
-          //below section
-          Expanded(
-            flex: 4,
-            child: Container(
-              padding: EdgeInsets.all(16.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _buildRedSquare(),
-                  _buildRedSquare(),
-                  
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _buildRedSquare(),
-                  _buildRedSquare(),
-                  
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _buildRedSquare(),
-                  _buildRedSquare(),
-                  
-                ],
-              ),
-            ],
-                
-              ),
-            ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.business),
+            label: 'Services',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Me',
           ),
         ],
       ),
     );
   }
 
-Widget _buildRedSquare() {
+  Widget _getBody(int index) {
+    switch (index) {
+      case 0:
+        return MajlisgramHomePage();
+      case 1:
+        return ServicesPage();
+      case 2:
+        return MePage();
+      default:
+        return Container();
+    }
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+}
+
+class MajlisgramHomePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        // Above section
+        Expanded(
+          flex: 2,
+          child: Container(
+            color: Colors.blue,
+            child: Center(
+              child: Text(
+                'Above Section',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+        ),
+        Divider(),
+        // Below section
+        Expanded(
+          flex: 4,
+          child: Container(
+            padding: EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _buildRedSquare(),
+                    _buildRedSquare(),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _buildRedSquare(),
+                    _buildRedSquare(),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _buildRedSquare(),
+                    _buildRedSquare(),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildRedSquare() {
     return Card(
       child: Container(
         width: 150,
@@ -82,7 +127,29 @@ Widget _buildRedSquare() {
       ),
     );
   }
-        
+}
 
+class ServicesPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Text('Services Page'),
+    );
+  }
+}
 
+class MePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Text('Me Page'),
+    );
+  }
+}
+
+void main() {
+  runApp(MaterialApp(
+    title: 'MajlisGram App',
+    home: MajlisgramHome(),
+  ));
 }
