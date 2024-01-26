@@ -41,7 +41,15 @@ class _MajlisgramHomeState extends State<MajlisgramHome> {
   Widget _getBody(int index) {
     switch (index) {
       case 0:
-        return MajlisgramHomePage();
+        return MajlisgramHomePage(
+          onCardTapped: () {
+            // Navigate to Office Page
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => OfficePage()),
+            );
+          },
+        );
       case 1:
         return ServicesPage();
       case 2:
@@ -59,6 +67,10 @@ class _MajlisgramHomeState extends State<MajlisgramHome> {
 }
 
 class MajlisgramHomePage extends StatelessWidget {
+  final VoidCallback? onCardTapped;
+
+  const MajlisgramHomePage({Key? key, this.onCardTapped}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -92,22 +104,22 @@ class MajlisgramHomePage extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    _buildRedSquare(),
-                    _buildRedSquare(),
+                    _buildRedSquare('Office', onCardTapped),
+                    _buildRedSquare('Staff', onCardTapped),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    _buildRedSquare(),
-                    _buildRedSquare(),
+                    _buildRedSquare('Student', onCardTapped),
+                    _buildRedSquare('Hostel', onCardTapped),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    _buildRedSquare(),
-                    _buildRedSquare(),
+                    _buildRedSquare('Library', onCardTapped),
+                    _buildRedSquare('Canteen', onCardTapped),
                   ],
                 ),
               ],
@@ -118,12 +130,24 @@ class MajlisgramHomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildRedSquare() {
-    return Card(
-      child: Container(
-        width: 150,
-        height: 100,
-        color: Colors.red,
+  Widget _buildRedSquare(String title, VoidCallback? onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Card(
+        child: Container(
+          width: 150,
+          height: 100,
+          color: Colors.red,
+          child: Center(
+            child: Text(
+              title,
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -143,6 +167,20 @@ class MePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Text('Me Page'),
+    );
+  }
+}
+
+class OfficePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Office'),
+      ),
+      body: Center(
+        child: Text('Office Page'),
+      ),
     );
   }
 }
