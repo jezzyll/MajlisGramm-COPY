@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_111_copy/office_Home.dart';
 
 class MajlisgramHome extends StatefulWidget {
   const MajlisgramHome({Key? key}) : super(key: key);
@@ -46,7 +47,7 @@ class _MajlisgramHomeState extends State<MajlisgramHome> {
             // Navigate to Office Page
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => OfficePage()),
+              MaterialPageRoute(builder: (context) => OfficeStudentFee()),
             );
           },
         );
@@ -171,19 +172,7 @@ class MePage extends StatelessWidget {
   }
 }
 
-class OfficePage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Office'),
-      ),
-      body: Center(
-        child: Text('Office Page'),
-      ),
-    );
-  }
-}
+
 
 void main() {
   runApp(MaterialApp(
