@@ -1,7 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_111_copy/majlisgram_home.dart';
-import 'package:flutter_application_111_copy/signin_scree.dart';
+import 'package:flutter_application_111_copy/Auth/majlisgram_home.dart';
+import 'package:flutter_application_111_copy/Auth/signin_scree.dart';
+
 
 class WelcomePage extends StatefulWidget {
   const WelcomePage({super.key});

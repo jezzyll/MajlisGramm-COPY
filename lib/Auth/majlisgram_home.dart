@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_111_copy/office_Home.dart';
+import 'package:flutter_application_111_copy/Canteen/canteen_main_screen.dart';
+import 'package:flutter_application_111_copy/Offiice/office_Home.dart';
 
 class MajlisgramHome extends StatefulWidget {
   const MajlisgramHome({Key? key}) : super(key: key);
@@ -47,7 +48,7 @@ class _MajlisgramHomeState extends State<MajlisgramHome> {
             // Navigate to Office Page
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => OfficeStudentFee()),
+              MaterialPageRoute(builder: (context) => CanteenMainScreen()),
             );
           },
         );
