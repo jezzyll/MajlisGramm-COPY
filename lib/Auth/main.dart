@@ -4,6 +4,7 @@ import 'package:flutter_application_111_copy/Auth/signin_scree.dart';
 import 'package:flutter_application_111_copy/Auth/signup_screen.dart';
 import 'package:flutter_application_111_copy/firebase_options.dart';
 import 'package:flutter_application_111_copy/Auth/home_screen.dart';
+import 'package:flutter_application_111_copy/splash_screen.dart';
 
 
 
@@ -25,11 +26,12 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       
-      initialRoute: '/',
+      initialRoute: '/splash',
       routes: {
         '/': (context) => HomeScreen(),
         '/signup': (context) => SignUpScreen(), // Create SignUpPage separately
-        '/signin': (context) => LoginScreen(), // Create SignInPage separately
+        '/signin': (context) => LoginScreen(),
+        '/splash': (context) => SplashScreen(), // Create SignInPage separately
       },
     );
   }
