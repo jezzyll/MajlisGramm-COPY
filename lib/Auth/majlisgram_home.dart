@@ -44,8 +44,31 @@ class _MajlisgramHomeState extends State<MajlisgramHome> {
     switch (index) {
       case 0:
         return MajlisgramHomePage(
-          onCardTapped: () {
+          onOfficeTapped: () {
             // Navigate to Office Page
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => OfficeHomePage()),
+            );
+          },
+          onStaffTapped: () {
+            // Navigate to Staff Page
+            
+          },
+          onStudentTapped: () {
+            // Navigate to Student Page
+
+          },
+          onHostelTapped: () {
+            // Navigate to Hostel Page
+            
+          },
+          onLibraryTapped: () {
+            // Navigate to Library Page
+            
+          },
+          onCanteenTapped: () {
+            // Navigate to Canteen Page
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => CanteenMainScreen()),
@@ -69,9 +92,22 @@ class _MajlisgramHomeState extends State<MajlisgramHome> {
 }
 
 class MajlisgramHomePage extends StatelessWidget {
-  final VoidCallback? onCardTapped;
+  final VoidCallback? onOfficeTapped;
+  final VoidCallback? onStaffTapped;
+  final VoidCallback? onStudentTapped;
+  final VoidCallback? onHostelTapped;
+  final VoidCallback? onLibraryTapped;
+  final VoidCallback? onCanteenTapped;
 
-  const MajlisgramHomePage({Key? key, this.onCardTapped}) : super(key: key);
+  const MajlisgramHomePage({
+    Key? key,
+    this.onOfficeTapped,
+    this.onStaffTapped,
+    this.onStudentTapped,
+    this.onHostelTapped,
+    this.onLibraryTapped,
+    this.onCanteenTapped,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -106,22 +142,22 @@ class MajlisgramHomePage extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    _buildRedSquare('Office', onCardTapped),
-                    _buildRedSquare('Staff', onCardTapped),
+                    _buildRedSquare('Office', onOfficeTapped),
+                    _buildRedSquare('Staff', onStaffTapped),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    _buildRedSquare('Student', onCardTapped),
-                    _buildRedSquare('Hostel', onCardTapped),
+                    _buildRedSquare('Student', onStudentTapped),
+                    _buildRedSquare('Hostel', onHostelTapped),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    _buildRedSquare('Library', onCardTapped),
-                    _buildRedSquare('Canteen', onCardTapped),
+                    _buildRedSquare('Library', onLibraryTapped),
+                    _buildRedSquare('Canteen', onCanteenTapped),
                   ],
                 ),
               ],
@@ -172,8 +208,6 @@ class MePage extends StatelessWidget {
     );
   }
 }
-
-
 
 void main() {
   runApp(MaterialApp(
