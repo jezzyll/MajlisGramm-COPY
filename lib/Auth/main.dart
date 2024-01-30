@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       
-      initialRoute: '/splash',
+      initialRoute: '/',
       routes: {
         '/': (context) => HomeScreen(),
         '/signup': (context) => SignUpScreen(), // Create SignUpPage separately
