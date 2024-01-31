@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_111_copy/Canteen/canteen_main_screen.dart';
 import 'package:flutter_application_111_copy/Offiice/office_Home.dart';
+import 'package:flutter_application_111_copy/Union/union_home.dart';
 
 class MajlisgramHome extends StatefulWidget {
   const MajlisgramHome({Key? key}) : super(key: key);
@@ -55,8 +56,14 @@ class _MajlisgramHomeState extends State<MajlisgramHome> {
             // Navigate to Staff Page
             
           },
-          onStudentTapped: () {
+          onUnionTapped: () {
             // Navigate to Student Page
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => UnionImageSlider())
+            ).then((value){
+              setState(() {});
+              });
 
           },
           onHostelTapped: () {
@@ -94,7 +101,7 @@ class _MajlisgramHomeState extends State<MajlisgramHome> {
 class MajlisgramHomePage extends StatelessWidget {
   final VoidCallback? onOfficeTapped;
   final VoidCallback? onStaffTapped;
-  final VoidCallback? onStudentTapped;
+  final VoidCallback? onUnionTapped;
   final VoidCallback? onHostelTapped;
   final VoidCallback? onLibraryTapped;
   final VoidCallback? onCanteenTapped;
@@ -103,7 +110,7 @@ class MajlisgramHomePage extends StatelessWidget {
     Key? key,
     this.onOfficeTapped,
     this.onStaffTapped,
-    this.onStudentTapped,
+    this.onUnionTapped,
     this.onHostelTapped,
     this.onLibraryTapped,
     this.onCanteenTapped,
@@ -149,7 +156,7 @@ class MajlisgramHomePage extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    _buildRedSquare('Student', onStudentTapped),
+                    _buildRedSquare('Student', onUnionTapped),
                     _buildRedSquare('Hostel', onHostelTapped),
                   ],
                 ),
