@@ -156,7 +156,7 @@ class MajlisgramHomePage extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    _buildRedSquare('Student', onUnionTapped),
+                    _buildRedSquare('Union', onUnionTapped),
                     _buildRedSquare('Hostel', onHostelTapped),
                   ],
                 ),
