@@ -43,15 +43,3 @@ class OfficeHomePage extends StatelessWidget {
   }
 }
 
-void main() {
-  runApp(MaterialApp(
-    initialRoute: '/home',
-    routes: {
-      '/home': (context) => OfficeHomePage(),
-      '/staff': (context) => OfficeStaffPage(),
-      '/nonStaff': (context) => OfficeNonStaffPage(),
-      '/feeDetails': (context) => OfficeStudentFee(),
-      '/stock': (context) => OfficeStockPage(),
-    },
-  ));
-}
