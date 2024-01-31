@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore package
 import 'package:flutter/material.dart';
 
 class CanteenOrderFood extends StatefulWidget {
@@ -12,10 +13,33 @@ class _CanteenOrderFoodState extends State<CanteenOrderFood> {
   bool wantToOrder = true;
 
   @override
+  void initState() {
+    super.initState();
+    // Call a function to fetch noOrderCount from Firestore
+    _fetchNoOrderCount();
+  }
+
+  // Function to fetch noOrderCount from Firestore
+  void _fetchNoOrderCount() async {
+    try {
+      // Reference to the document in Firestore
+      DocumentSnapshot<Map<String, dynamic>> snapshot =
+          await FirebaseFirestore.instance.collection('canteen').doc('order').get();
+
+      // Retrieve the noOrderCount value from the document
+      setState(() {
+        noOrderCount = snapshot.data()?['noOrderCount'] ?? 0;
+      });
+    } catch (error) {
+      print('Error fetching noOrderCount: $error');
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("order you food"),
+        title: Text("Order Your Food"),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

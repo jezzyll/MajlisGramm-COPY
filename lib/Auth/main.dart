@@ -18,6 +18,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
+    
 );
   runApp(const MyApp());
 }
@@ -37,7 +38,7 @@ class MyApp extends StatelessWidget {
         '/signup': (context) => SignUpScreen(), // Create SignUpPage separately
         '/signin': (context) => LoginScreen(),
         '/splash': (context) => SplashScreen(),
-         // Create SignInPage separately
+         // OfficePage Routes
       '/home': (context) => OfficeHomePage(),
       '/staff': (context) => OfficeStaffPage(),
       '/nonStaff': (context) => OfficeNonStaffPage(),

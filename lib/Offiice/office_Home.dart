@@ -40,6 +40,7 @@ class OfficeHomePage extends StatelessWidget {
         ),
       ),
     );
-  }
+    
+}
 }
 
