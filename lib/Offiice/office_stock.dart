@@ -4,9 +4,13 @@ class OfficeStockPage extends StatefulWidget {
   @override
   _OfficeStockPageState createState() => _OfficeStockPageState();
 }
+List<List<String>> gridData = List.generate(10, (_) => List.empty(growable: true));
+
 
 class _OfficeStockPageState extends State<OfficeStockPage> {
   List<List<String>> gridData = List.generate(10, (_) => List.filled(10, ""));
+
+  
 
   void addRow() {
     setState(() {
@@ -38,14 +42,14 @@ class _OfficeStockPageState extends State<OfficeStockPage> {
                 child: DataTable(
                   columns: List.generate(
                     gridData[0].length,
-                        (index) => DataColumn(label: Text('Column $index')),
+                    (index) => DataColumn(label: Text('Column $index')),
                   ),
                   rows: List.generate(
                     gridData.length,
-                        (index) => DataRow(
+                    (index) => DataRow(
                       cells: List.generate(
                         gridData[index].length,
-                            (cellIndex) => DataCell(
+                        (cellIndex) => DataCell(
                           TextFormField(
                             initialValue: gridData[index][cellIndex],
                             onChanged: (newValue) {
