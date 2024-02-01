@@ -18,7 +18,7 @@ class OfficeStudentFee extends StatelessWidget {
               itemCount: snapshot.data!.docs.length,
               itemBuilder: (context,Index){
                 final DocumentSnapshot usersSnap = snapshot.data.docs[Index];
-                return Text(usersSnap['name']);
+                return Text(usersSnap['name ']);
 
               },
               );
