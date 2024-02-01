@@ -4,7 +4,7 @@ class OfficeStockPage extends StatefulWidget {
   @override
   _OfficeStockPageState createState() => _OfficeStockPageState();
 }
-List<List<String>> gridData = List.generate(10, (_) => List.empty(growable: true));
+
 
 
 class _OfficeStockPageState extends State<OfficeStockPage> {
