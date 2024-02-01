@@ -16,6 +16,9 @@ class _StudentFeePageState extends State<OfficeStockPage> {
     });
   }
 
+  final growableList = List.empty(growable: true);
+
+
   void addColumn() {
     setState(() {
       for (int i = 0; i < gridData.length; i++) {
