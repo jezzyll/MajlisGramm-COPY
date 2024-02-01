@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class OfficeStudentFee extends StatelessWidget {
   final  CollectionReference users =
-  FirebaseFirestore.instance.collection('users');
+  FirebaseFirestore.instance.collection('name');
   @override
   Widget build(BuildContext context) {
     return Scaffold(
