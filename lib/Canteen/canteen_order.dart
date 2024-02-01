@@ -2,36 +2,58 @@ import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore packa
 import 'package:flutter/material.dart';
 
 class CanteenOrderFood extends StatefulWidget {
-  const CanteenOrderFood({super.key});
+  const CanteenOrderFood({Key? key});
 
   @override
   State<CanteenOrderFood> createState() => _CanteenOrderFoodState();
 }
 
 class _CanteenOrderFoodState extends State<CanteenOrderFood> {
+  int orderCount = 0;
   int noOrderCount = 0;
-  bool wantToOrder = true;
 
   @override
   void initState() {
     super.initState();
-    // Call a function to fetch noOrderCount from Firestore
-    _fetchNoOrderCount();
+    // Call a function to fetch counts from Firestore
+    _fetchCounts();
   }
 
-  // Function to fetch noOrderCount from Firestore
-  void _fetchNoOrderCount() async {
+  // Function to fetch counts from Firestore
+  void _fetchCounts() async {
     try {
       // Reference to the document in Firestore
       DocumentSnapshot<Map<String, dynamic>> snapshot =
           await FirebaseFirestore.instance.collection('canteen').doc('order').get();
 
-      // Retrieve the noOrderCount value from the document
+      // Retrieve the counts from the document
       setState(() {
-        noOrderCount = snapshot.data()?['noOrderCount'] ?? 0;
+        orderCount = (snapshot.data()?['orderCount'] ?? 0) as int;
+        noOrderCount = (snapshot.data()?['noOrderCount'] ?? 0) as int;
       });
     } catch (error) {
-      print('Error fetching noOrderCount: $error');
+      print('Error fetching counts: $error');
+    }
+  }
+
+  // Function to update counts in Firestore
+  void _updateCounts(bool wantToOrder) async {
+    try {
+      // Reference to the document in Firestore
+      DocumentReference<Map<String, dynamic>> docRef =
+          FirebaseFirestore.instance.collection('canteen').doc('order');
+
+      // Update counts based on user selection
+      if (wantToOrder) {
+        await docRef.update({'orderCount': FieldValue.increment(1)});
+      } else {
+        await docRef.update({'noOrderCount': FieldValue.increment(1)});
+      }
+
+      // Update counts in the UI
+      _fetchCounts();
+    } catch (error) {
+      print('Error updating counts: $error');
     }
   }
 
@@ -55,27 +77,17 @@ class _CanteenOrderFoodState extends State<CanteenOrderFood> {
               children: [
                 Radio(
                   value: true,
-                  groupValue: wantToOrder,
+                  groupValue: orderCount,
                   onChanged: (value) {
-                    setState(() {
-                      wantToOrder = value!;
-                      if (wantToOrder) {
-                        noOrderCount = 0;
-                      }
-                    });
+                    _updateCounts(value as bool);
                   },
                 ),
                 Text('Yes'),
                 Radio(
                   value: false,
-                  groupValue: wantToOrder,
+                  groupValue: orderCount,
                   onChanged: (value) {
-                    setState(() {
-                      wantToOrder = value!;
-                      if (!wantToOrder) {
-                        noOrderCount = 1;
-                      }
-                    });
+                    _updateCounts(value as bool);
                   },
                 ),
                 Text('No'),
@@ -83,20 +95,13 @@ class _CanteenOrderFoodState extends State<CanteenOrderFood> {
             ),
             SizedBox(height: 20),
             Text(
-              'Order Count: ${wantToOrder ? 1 : 0}',
+              'Order Count: $orderCount',
               style: TextStyle(fontSize: 16),
             ),
             SizedBox(height: 20),
-            Container(
-              padding: EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.black),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Text(
-                'Users who don\'t need food: $noOrderCount',
-                style: TextStyle(fontSize: 16),
-              ),
+            Text(
+              'Users who don\'t need food: $noOrderCount',
+              style: TextStyle(fontSize: 16),
             ),
           ],
         ),
