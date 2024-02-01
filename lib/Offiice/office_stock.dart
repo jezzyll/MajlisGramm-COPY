@@ -1,13 +1,11 @@
-
-
 import 'package:flutter/material.dart';
 
 class OfficeStockPage extends StatefulWidget {
   @override
-  _StudentFeePageState createState() => _StudentFeePageState();
+  _OfficeStockPageState createState() => _OfficeStockPageState();
 }
 
-class _StudentFeePageState extends State<OfficeStockPage> {
+class _OfficeStockPageState extends State<OfficeStockPage> {
   List<List<String>> gridData = List.generate(10, (_) => List.filled(10, ""));
 
   void addRow() {
@@ -15,9 +13,6 @@ class _StudentFeePageState extends State<OfficeStockPage> {
       gridData.add(List.filled(gridData[0].length, ""));
     });
   }
-
-  final growableList = List.empty(growable: true);
-
 
   void addColumn() {
     setState(() {
@@ -31,28 +26,40 @@ class _StudentFeePageState extends State<OfficeStockPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Student Fee Page'),
+        title: Text('Office Stock Page'),
       ),
       body: Column(
         children: [
           Expanded(
-            child: GridView.builder(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: gridData[0].length,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: DataTable(
+                  columns: List.generate(
+                    gridData[0].length,
+                        (index) => DataColumn(label: Text('Column $index')),
+                  ),
+                  rows: List.generate(
+                    gridData.length,
+                        (index) => DataRow(
+                      cells: List.generate(
+                        gridData[index].length,
+                            (cellIndex) => DataCell(
+                          TextFormField(
+                            initialValue: gridData[index][cellIndex],
+                            onChanged: (newValue) {
+                              setState(() {
+                                gridData[index][cellIndex] = newValue;
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
               ),
-              itemCount: gridData.length * gridData[0].length,
-              itemBuilder: (context, index) {
-                int rowIndex = index ~/ gridData[0].length;
-                int colIndex = index % gridData[0].length;
-                return Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(),
-                  ),
-                  child: Center(
-                    child: Text(gridData[rowIndex][colIndex]),
-                  ),
-                );
-              },
             ),
           ),
           Row(
