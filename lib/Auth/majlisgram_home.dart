@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_111_copy/Canteen/canteen_main_screen.dart';
 import 'package:flutter_application_111_copy/Offiice/office_Home.dart';
+import 'package:flutter_application_111_copy/Union/union_activity.dart';
 import 'package:flutter_application_111_copy/Union/union_home.dart';
 
 class MajlisgramHome extends StatefulWidget {
@@ -46,7 +47,6 @@ class _MajlisgramHomeState extends State<MajlisgramHome> {
       case 0:
         return MajlisgramHomePage(
           onOfficeTapped: () {
-            // Navigate to Office Page
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => OfficeHomePage()),
@@ -54,28 +54,22 @@ class _MajlisgramHomeState extends State<MajlisgramHome> {
           },
           onStaffTapped: () {
             // Navigate to Staff Page
-            
           },
           onUnionTapped: () {
-            // Navigate to Student Page
             Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => UnionImageSlider())
-            ).then((value){
+                context,
+                MaterialPageRoute(
+                    builder: (context) => UnionACtivity())).then((value) {
               setState(() {});
-              });
-
+            });
           },
           onHostelTapped: () {
             // Navigate to Hostel Page
-            
           },
           onLibraryTapped: () {
             // Navigate to Library Page
-            
           },
           onCanteenTapped: () {
-            // Navigate to Canteen Page
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => CanteenMainScreen()),
@@ -120,7 +114,6 @@ class MajlisgramHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // Above section
         Expanded(
           flex: 2,
           child: Container(
@@ -138,7 +131,6 @@ class MajlisgramHomePage extends StatelessWidget {
           ),
         ),
         Divider(),
-        // Below section
         Expanded(
           flex: 4,
           child: Container(
