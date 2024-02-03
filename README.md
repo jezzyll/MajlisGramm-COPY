@@ -1,6 +1,6 @@
 # MAJLISGRAM-flutter_application_111_copy
 
- Flutter project.
+MajlisGram Flutter project.
 
 ## Getting Started
 
