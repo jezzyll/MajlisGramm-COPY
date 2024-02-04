@@ -15,9 +15,9 @@ class CanteenMainScreen extends StatelessWidget {
           title: Text('Canteen App'),
           bottom: TabBar(
             tabs: [
-              Tab(icon: Icon(Icons.home), text: 'Home'),
-              Tab(icon: Icon(Icons.search), text: 'Search'),
-              Tab(icon: Icon(Icons.book), text: 'Orders'),
+              Tab(icon: Icon(Icons.home_mini_rounded), text: 'Home'),
+              Tab(icon: Icon(Icons.fastfood_rounded), text: 'Menu'),
+              Tab(icon: Icon(Icons.book_rounded), text: 'Orders'),
             ],
           ),
         ),
