@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_111_copy/Union/SubCommittee/union_literary.dart';
 import 'package:flutter_application_111_copy/Union/SubCommittee/union_sub_committee.dart';
 
-void main() => runApp(UnionGarden());
-
 class UnionGarden extends StatelessWidget {
   const UnionGarden({Key? key}) : super(key: key);
 
@@ -38,6 +36,8 @@ class _BodyState extends State<Body> {
     'https://img.freepik.com/free-vector/merry-christmas-wallpaper-design_79603-2129.jpg?size=626&ext=jpg&ga=GA1.1.648074344.1702646045&semt=ais',
     'https://img.freepik.com/free-vector/merry-christmas-lettering-with-pine-leaves_52683-30638.jpg?size=626&ext=jpg&ga=GA1.1.648074344.1702646045&semt=ais',
   ];
+
+  List<String> textFields = [];
 
   @override
   Widget build(BuildContext context) {
@@ -88,40 +88,62 @@ class _BodyState extends State<Body> {
             ),
           ),
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        Column(
           children: [
-            Column(
-              children: [
-                CircleAvatar(
-                  radius: 70,
-                  backgroundImage: AssetImage('assets/images/me.jpg'),
+            for (int i = 0; i < items.length; i++)
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: [
+                    CircleAvatar(
+                      radius: 70,
+                      backgroundImage: AssetImage('assets/images/me.jpg'),
+                    ),
+                    SizedBox(height: 5),
+                    Text(
+                      'Your Name',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    Container(
+                      padding: EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: TextField(
+                        onChanged: (value) {
+                          textFields[i] = value;
+                        },
+                        decoration: InputDecoration(
+                          hintText: 'Enter text here...',
+                          border: InputBorder.none,
+                        ),
+                        maxLines: null,
+                      ),
+                    ),
+                  ],
                 ),
-                SizedBox(height: 5),
-                Text(
-                  'Your Name',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-            Column(
-              children: [
-                CircleAvatar(
-                  radius: 70,
-                  backgroundImage: AssetImage('assets/images/PSC1.jpg'),
-                ),
-                SizedBox(height: 5),
-                Text(
-                  'Second Person Name',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
+              ),
           ],
+        ),
+        SizedBox(height: 20),
+        ElevatedButton(
+          onPressed: () {
+            setState(() {
+              textFields.add('');
+            });
+          },
+          child: Text('Add'),
+        ),
+        SizedBox(height: 20),
+        ElevatedButton(
+          onPressed: () {
+            // Add code here to store textFields to Firestore
+          },
+          child: Text('Submit'),
         ),
         SizedBox(height: 20),
         Row(
