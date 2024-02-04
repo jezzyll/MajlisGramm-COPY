@@ -2,6 +2,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_111_copy/Union/SubCommittee/union_literary.dart';
 import 'package:flutter_application_111_copy/Union/SubCommittee/union_sub_committee.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UnionGarden extends StatelessWidget {
   const UnionGarden({Key? key}) : super(key: key);
@@ -90,7 +91,7 @@ class _BodyState extends State<Body> {
         ),
         Column(
           children: [
-            for (int i = 0; i < items.length; i++)
+            for (int i = 0; i < textFields.length; i++)
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
@@ -141,7 +142,7 @@ class _BodyState extends State<Body> {
         SizedBox(height: 20),
         ElevatedButton(
           onPressed: () {
-            // Add code here to store textFields to Firestore
+            _submitToFirestore();
           },
           child: Text('Submit'),
         ),
@@ -172,5 +173,17 @@ class _BodyState extends State<Body> {
         ),
       ],
     );
+  }
+
+  Future<void> _submitToFirestore() async {
+    for (String text in textFields) {
+      await FirebaseFirestore.instance.collection('committee_members').add({
+        'text': text,
+      });
+    }
+    // Clear textFields list after submitting to Firestore
+    setState(() {
+      textFields.clear();
+    });
   }
 }
