@@ -238,9 +238,11 @@ class _ImageSliderState extends State<UnionImageSlider> {
           child: Text('Activities'),
           onPressed: () {
             Navigator.push(context, 
-            MaterialPageRoute(builder: (context) => UnionACtivity(),
-            ),
+            MaterialPageRoute(builder: (context) => UnionACtivity())).then((value) {
+              setState(() {});
+            }
             );
+            
           },
           ),
               ],
