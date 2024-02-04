@@ -35,9 +35,9 @@ class _StudentFeePageState extends State<StudentFeePage> {
   }
 
   Future<void> _fetchData() async {
-    QuerySnapshot snapshot = await firestore.collection('fee_data').get();
+    QuerySnapshot snapshot = await firestore.collection('').get();
     setState(() {
-      gridData = snapshot.docs.map((doc) => List<String>.from(doc['row'])).toList();
+      gridData = snapshot.docs.map((doc) => List<String>.from(doc[''])).toList();
     });
   }
 
