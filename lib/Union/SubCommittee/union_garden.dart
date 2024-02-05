@@ -1,7 +1,4 @@
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_111_copy/Union/SubCommittee/union_literary.dart';
-import 'package:flutter_application_111_copy/Union/SubCommittee/union_sub_committee.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UnionGarden extends StatelessWidget {
@@ -31,53 +28,14 @@ class Body extends StatefulWidget {
 }
 
 class _BodyState extends State<Body> {
-  List<String> items = [
-    'https://img.freepik.com/free-vector/christmas-background-flat-design_52683-47609.jpg?size=626&ext=jpg&ga=GA1.1.648074344.1702646045&semt=ais',
-    'https://img.freepik.com/free-vector/christmas-background-with-realistic-decoration_52683-30774.jpg?size=626&ext=jpg&ga=GA1.1.648074344.1702646045&semt=ais',
-    'https://img.freepik.com/free-vector/merry-christmas-wallpaper-design_79603-2129.jpg?size=626&ext=jpg&ga=GA1.1.648074344.1702646045&semt=ais',
-    'https://img.freepik.com/free-vector/merry-christmas-lettering-with-pine-leaves_52683-30638.jpg?size=626&ext=jpg&ga=GA1.1.648074344.1702646045&semt=ais',
-  ];
-
-  List<String> textFields = [];
+  TextEditingController _controller1 = TextEditingController();
+  TextEditingController _controller2 = TextEditingController();
+  TextEditingController _controller3 = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
-            "Notice",
-            style: TextStyle(
-              color: Colors.red,
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
-            ),
-          ),
-        ),
-        SizedBox(height: 10,),
-        CarouselSlider(
-          items: items.map((e) => ClipRRect(
-            borderRadius: BorderRadius.circular(6),
-            child: Stack(
-              fit: StackFit.expand,
-              children: [
-                Image.network(
-                  e,
-                  height: 200,
-                  width: 100,
-                  fit: BoxFit.cover,
-                ),
-              ],
-            ),
-          )).toList(),
-          options: CarouselOptions(
-            autoPlay: true,
-            enableInfiniteScroll: false,
-            enlargeCenterPage: true,
-            height: 150
-          )
-        ),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Text(
@@ -89,101 +47,81 @@ class _BodyState extends State<Body> {
             ),
           ),
         ),
-        Column(
-          children: [
-            for (int i = 0; i < textFields.length; i++)
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  children: [
-                    CircleAvatar(
-                      radius: 70,
-                      backgroundImage: AssetImage('assets/images/me.jpg'),
-                    ),
-                    SizedBox(height: 5),
-                    Text(
-                      'Your Name',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                    Container(
-                      padding: EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: TextField(
-                        onChanged: (value) {
-                          textFields[i] = value;
-                        },
-                        decoration: InputDecoration(
-                          hintText: 'Enter text here...',
-                          border: InputBorder.none,
-                        ),
-                        maxLines: null,
-                      ),
-                    ),
-                  ],
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              CircleAvatar(
+                radius: 70,
+                backgroundImage: AssetImage('assets/images/me.jpg'),
+              ),
+              SizedBox(height: 5),
+              TextField(
+                controller: _controller1,
+                decoration: InputDecoration(
+                  hintText: 'Enter name...',
                 ),
               ),
-          ],
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              CircleAvatar(
+                radius: 70,
+                backgroundImage: AssetImage('assets/images/PSC1.jpg'),
+              ),
+              SizedBox(height: 5),
+              TextField(
+                controller: _controller2,
+                decoration: InputDecoration(
+                  hintText: 'Enter name...',
+                ),
+              ),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+            padding: EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: TextField(
+              controller: _controller3,
+              maxLines: null,
+              decoration: InputDecoration(
+                hintText: 'Enter text here...',
+                border: InputBorder.none,
+              ),
+            ),
+          ),
         ),
         SizedBox(height: 20),
         ElevatedButton(
-          onPressed: () {
-            setState(() {
-              textFields.add('');
-            });
-          },
-          child: Text('Add'),
-        ),
-        SizedBox(height: 20),
-        ElevatedButton(
-          onPressed: () {
-            _submitToFirestore();
+          onPressed: () async {
+            await _submitToFirestore();
           },
           child: Text('Submit'),
-        ),
-        SizedBox(height: 20),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => UnionSubcommittee()),
-                );
-              },
-              child: Text('Back'),
-            ),
-            SizedBox(width: 20),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => UnionLiterary()),
-                );
-              },
-              child: Text('Next'),
-            ),
-          ],
         ),
       ],
     );
   }
 
   Future<void> _submitToFirestore() async {
-    for (String text in textFields) {
-      await FirebaseFirestore.instance.collection('committee_members').add({
-        'text': text,
-      });
-    }
-    // Clear textFields list after submitting to Firestore
-    setState(() {
-      textFields.clear();
+    await FirebaseFirestore.instance.collection('committee_members').add({
+      'name1': _controller1.text,
+      'name2': _controller2.text,
+      'containerText': _controller3.text,
     });
+
+    // Clear text fields after submission
+    _controller1.clear();
+    _controller2.clear();
+    _controller3.clear();
   }
 }
