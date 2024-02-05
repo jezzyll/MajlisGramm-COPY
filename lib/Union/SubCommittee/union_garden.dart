@@ -83,22 +83,36 @@ class _BodyState extends State<Body> {
             ],
           ),
         ),
-        Padding(
+        SizedBox(height: 20),
+        Container(
           padding: const EdgeInsets.all(8.0),
-          child: Container(
-            padding: EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: TextField(
-              controller: _controller3,
-              maxLines: null,
-              decoration: InputDecoration(
-                hintText: 'Enter text here...',
-                border: InputBorder.none,
+          child: Column(
+            children: [
+              Text(
+                "Additional Information",
+                style: TextStyle(
+                  color: Colors.red,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                ),
               ),
-            ),
+              SizedBox(height: 10),
+              Container(
+                padding: EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: TextField(
+                  controller: _controller3,
+                  maxLines: null,
+                  decoration: InputDecoration(
+                    hintText: 'Enter text here...',
+                    border: InputBorder.none,
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
         SizedBox(height: 20),
@@ -116,7 +130,7 @@ class _BodyState extends State<Body> {
     await FirebaseFirestore.instance.collection('committee_members').add({
       'name1': _controller1.text,
       'name2': _controller2.text,
-      'containerText': _controller3.text,
+      'additionalInformation': _controller3.text,
     });
 
     // Clear text fields after submission
