@@ -123,8 +123,6 @@ class _BodyState extends State<Body> {
         ElevatedButton(
           onPressed: () async {
             await _submitToFirestore();
-            // Fetch data from Firestore after submission
-            await _fetchDataFromFirestore();
           },
           child: Text('Submit'),
         ),
@@ -142,6 +140,9 @@ class _BodyState extends State<Body> {
       'name2': _controller2.text,
       'additionalInformation': _controller3.text,
     });
+
+    // Fetch data from Firestore after submission
+    await _fetchDataFromFirestore();
 
     // Clear text fields after submission
     _controller1.clear();
