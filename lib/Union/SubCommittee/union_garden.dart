@@ -30,11 +30,9 @@ class Body extends StatefulWidget {
 class _BodyState extends State<Body> {
   TextEditingController _controller1 = TextEditingController();
   TextEditingController _controller2 = TextEditingController();
-  TextEditingController _controller3 = TextEditingController();
 
   // List to store data fetched from Firestore
   List<String> committeeMembers = [];
-  String additionalInformation = '';
 
   @override
   Widget build(BuildContext context) {
@@ -88,38 +86,6 @@ class _BodyState extends State<Body> {
           ),
         ),
         SizedBox(height: 20),
-        Container(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              Text(
-                "Additional Information",
-                style: TextStyle(
-                  color: Colors.red,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                ),
-              ),
-              SizedBox(height: 10),
-              Container(
-                padding: EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: TextField(
-                  controller: _controller3,
-                  maxLines: null,
-                  decoration: InputDecoration(
-                    hintText: 'Enter text here...',
-                    border: InputBorder.none,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-        SizedBox(height: 20),
         ElevatedButton(
           onPressed: () async {
             await _submitToFirestore();
@@ -128,8 +94,19 @@ class _BodyState extends State<Body> {
         ),
         SizedBox(height: 20),
         // Display data fetched from Firestore
-        Text('Committee Members: ${committeeMembers.join(', ')}'),
-        Text('Additional Information: $additionalInformation'),
+        Column(
+          children: committeeMembers.map((member) => Text(member)).toList(),
+        ),
+        SizedBox(height: 20),
+        ElevatedButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => AdditionalInformationPage()),
+            );
+          },
+          child: Text('Add'),
+        ),
       ],
     );
   }
@@ -138,7 +115,6 @@ class _BodyState extends State<Body> {
     await FirebaseFirestore.instance.collection('committee_members').add({
       'name1': _controller1.text,
       'name2': _controller2.text,
-      'additionalInformation': _controller3.text,
     });
 
     // Fetch data from Firestore after submission
@@ -147,7 +123,6 @@ class _BodyState extends State<Body> {
     // Clear text fields after submission
     _controller1.clear();
     _controller2.clear();
-    _controller3.clear();
   }
 
   Future<void> _fetchDataFromFirestore() async {
@@ -155,7 +130,52 @@ class _BodyState extends State<Body> {
     final snapshot = await FirebaseFirestore.instance.collection('committee_members').get();
     setState(() {
       committeeMembers = snapshot.docs.map<String>((doc) => doc['name1'] + ', ' + doc['name2']).toList();
-      additionalInformation = snapshot.docs.isNotEmpty ? snapshot.docs.first['additionalInformation'] : '';
     });
+  }
+}
+
+class AdditionalInformationPage extends StatelessWidget {
+  TextEditingController _additionalInfoController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Additional Information'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          children: [
+            Expanded(
+              child: Container(
+                padding: EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: TextField(
+                  controller: _additionalInfoController,
+                  maxLines: null,
+                  decoration: InputDecoration(
+                    hintText: 'Enter text here...',
+                    border: InputBorder.none,
+                  ),
+                ),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                await FirebaseFirestore.instance.collection('additionalInformation').add({
+                  'info': _additionalInfoController.text,
+                });
+                Navigator.pop(context);
+              },
+              child: Text('Enter'),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
