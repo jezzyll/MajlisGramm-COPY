@@ -32,6 +32,10 @@ class _BodyState extends State<Body> {
   TextEditingController _controller2 = TextEditingController();
   TextEditingController _controller3 = TextEditingController();
 
+  // List to store data fetched from Firestore
+  List<String> committeeMembers = [];
+  String additionalInformation = '';
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -119,9 +123,15 @@ class _BodyState extends State<Body> {
         ElevatedButton(
           onPressed: () async {
             await _submitToFirestore();
+            // Fetch data from Firestore after submission
+            await _fetchDataFromFirestore();
           },
           child: Text('Submit'),
         ),
+        SizedBox(height: 20),
+        // Display data fetched from Firestore
+        Text('Committee Members: ${committeeMembers.join(', ')}'),
+        Text('Additional Information: $additionalInformation'),
       ],
     );
   }
@@ -137,5 +147,14 @@ class _BodyState extends State<Body> {
     _controller1.clear();
     _controller2.clear();
     _controller3.clear();
+  }
+
+  Future<void> _fetchDataFromFirestore() async {
+    // Fetch data from Firestore and update the state
+    final snapshot = await FirebaseFirestore.instance.collection('committee_members').get();
+    setState(() {
+      committeeMembers = snapshot.docs.map<String>((doc) => doc['name1'] + ', ' + doc['name2']).toList();
+      additionalInformation = snapshot.docs.isNotEmpty ? snapshot.docs.first['additionalInformation'] : '';
+    });
   }
 }
