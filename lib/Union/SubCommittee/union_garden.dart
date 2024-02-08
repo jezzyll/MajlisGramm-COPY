@@ -111,9 +111,9 @@ class _BodyState extends State<Body> {
         ),
         SizedBox(height: 20),
         // Display data fetched from Firestore
-        Column(
-          children: committeeMembers.map((member) => Text(member)).toList(),
-        ),
+        // Column(
+        //   children: committeeMembers.map((member) => Text(member)).toList(),
+        // ),
         SizedBox(height: 20),
         Text(
           "NEW UPDATES",
@@ -186,6 +186,9 @@ class _BodyState extends State<Body> {
     setState(() {
       committeeMembers =
           snapshot.docs.map<String>((doc) => doc['name1'] + ', ' + doc['name2']).toList();
+      // Update text field controllers with fetched data
+      _controller1.text = committeeMembers.isNotEmpty ? committeeMembers[0] : '';
+      _controller2.text = committeeMembers.length > 1 ? committeeMembers[1] : '';
     });
   }
 
