@@ -33,7 +33,7 @@ class _BodyState extends State<Body> {
 
   // List to store data fetched from Firestore
   List<String> committeeMembers = [];
-  String additionalInformation = '';
+  List<String> newUpdates = [];
 
   @override
   Widget build(BuildContext context) {
@@ -95,19 +95,22 @@ class _BodyState extends State<Body> {
         ),
         SizedBox(height: 20),
         // Display data fetched from Firestore
-        additionalInformation.isNotEmpty
-            ? Container(
-                padding: EdgeInsets.all(8.0),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Text(
-                  additionalInformation,
-                  style: TextStyle(fontSize: 16),
-                ),
-              )
-            : SizedBox(),
+        Column(
+          children: committeeMembers.map((member) => Text(member)).toList(),
+        ),
+        SizedBox(height: 20),
+        Text(
+          "NEW UPDATES",
+          style: TextStyle(
+            color: Colors.red,
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+          ),
+        ),
+        SizedBox(height: 10),
+        Column(
+          children: newUpdates.map((update) => _buildUpdateContainer(update)).toList(),
+        ),
         SizedBox(height: 20),
         ElevatedButton(
           onPressed: () {
@@ -115,10 +118,10 @@ class _BodyState extends State<Body> {
               context,
               MaterialPageRoute(builder: (context) => AdditionalInformationPage()),
             ).then((value) {
-              // Update additionalInformation after returning from AdditionalInformationPage
+              // Update newUpdates after returning from AdditionalInformationPage
               if (value != null) {
                 setState(() {
-                  additionalInformation = value;
+                  newUpdates.add(value);
                 });
               }
             });
@@ -126,6 +129,21 @@ class _BodyState extends State<Body> {
           child: Text('Add'),
         ),
       ],
+    );
+  }
+
+  Widget _buildUpdateContainer(String update) {
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 5),
+      padding: EdgeInsets.all(8.0),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Text(
+        update,
+        style: TextStyle(fontSize: 16),
+      ),
     );
   }
 
