@@ -135,14 +135,18 @@ class _BodyState extends State<Body> {
   Widget _buildUpdateContainer(String update) {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 5),
+      width: 300, // Fixed width
+      height: 100, // Fixed height
       padding: EdgeInsets.all(8.0),
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey),
         borderRadius: BorderRadius.circular(10),
       ),
-      child: Text(
-        update,
-        style: TextStyle(fontSize: 16),
+      child: SingleChildScrollView( // Use SingleChildScrollView to handle overflow
+        child: Text(
+          update,
+          style: TextStyle(fontSize: 16),
+        ),
       ),
     );
   }
@@ -186,6 +190,8 @@ class AdditionalInformationPage extends StatelessWidget {
           children: [
             Expanded(
               child: Container(
+                width: 400, // Fixed width
+                height: 100, // Fixed height
                 padding: EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.grey),
@@ -215,4 +221,8 @@ class AdditionalInformationPage extends StatelessWidget {
       ),
     );
   }
+}
+
+void main() {
+  runApp(UnionGarden());
 }
