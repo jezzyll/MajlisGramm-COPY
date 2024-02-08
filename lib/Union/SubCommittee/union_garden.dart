@@ -33,6 +33,7 @@ class _BodyState extends State<Body> {
 
   // List to store data fetched from Firestore
   List<String> committeeMembers = [];
+  String additionalInformation = '';
 
   @override
   Widget build(BuildContext context) {
@@ -94,16 +95,33 @@ class _BodyState extends State<Body> {
         ),
         SizedBox(height: 20),
         // Display data fetched from Firestore
-        Column(
-          children: committeeMembers.map((member) => Text(member)).toList(),
-        ),
+        additionalInformation.isNotEmpty
+            ? Container(
+                padding: EdgeInsets.all(8.0),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(
+                  additionalInformation,
+                  style: TextStyle(fontSize: 16),
+                ),
+              )
+            : SizedBox(),
         SizedBox(height: 20),
         ElevatedButton(
           onPressed: () {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => AdditionalInformationPage()),
-            );
+            ).then((value) {
+              // Update additionalInformation after returning from AdditionalInformationPage
+              if (value != null) {
+                setState(() {
+                  additionalInformation = value;
+                });
+              }
+            });
           },
           child: Text('Add'),
         ),
@@ -129,7 +147,8 @@ class _BodyState extends State<Body> {
     // Fetch data from Firestore and update the state
     final snapshot = await FirebaseFirestore.instance.collection('committee_members').get();
     setState(() {
-      committeeMembers = snapshot.docs.map<String>((doc) => doc['name1'] + ', ' + doc['name2']).toList();
+      committeeMembers =
+          snapshot.docs.map<String>((doc) => doc['name1'] + ', ' + doc['name2']).toList();
     });
   }
 }
@@ -169,7 +188,7 @@ class AdditionalInformationPage extends StatelessWidget {
                 await FirebaseFirestore.instance.collection('additionalInformation').add({
                   'info': _additionalInfoController.text,
                 });
-                Navigator.pop(context);
+                Navigator.pop(context, _additionalInfoController.text);
               },
               child: Text('Enter'),
             ),
