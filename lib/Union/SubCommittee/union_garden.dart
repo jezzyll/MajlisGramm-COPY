@@ -59,10 +59,17 @@ class _BodyState extends State<Body> {
                 backgroundImage: AssetImage('assets/images/me.jpg'),
               ),
               SizedBox(height: 5),
-              TextField(
+              TextFormField(
                 controller: _controller1,
                 decoration: InputDecoration(
                   hintText: 'Enter name...',
+                  suffixIcon: IconButton(
+                    icon: Icon(Icons.edit),
+                    onPressed: () {
+                      // Implement update functionality for committee member 1
+                      _updateCommitteeMember(1);
+                    },
+                  ),
                 ),
               ),
             ],
@@ -77,10 +84,17 @@ class _BodyState extends State<Body> {
                 backgroundImage: AssetImage('assets/images/PSC1.jpg'),
               ),
               SizedBox(height: 5),
-              TextField(
+              TextFormField(
                 controller: _controller2,
                 decoration: InputDecoration(
                   hintText: 'Enter name...',
+                  suffixIcon: IconButton(
+                    icon: Icon(Icons.edit),
+                    onPressed: () {
+                      // Implement update functionality for committee member 2
+                      _updateCommitteeMember(2);
+                    },
+                  ),
                 ),
               ),
             ],
@@ -89,6 +103,7 @@ class _BodyState extends State<Body> {
         SizedBox(height: 20),
         ElevatedButton(
           onPressed: () async {
+            // Submit committee members to Firestore
             await _submitToFirestore();
           },
           child: Text('Submit'),
@@ -114,6 +129,7 @@ class _BodyState extends State<Body> {
         SizedBox(height: 20),
         ElevatedButton(
           onPressed: () {
+            // Navigate to AdditionalInformationPage
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => AdditionalInformationPage()),
@@ -152,6 +168,7 @@ class _BodyState extends State<Body> {
   }
 
   Future<void> _submitToFirestore() async {
+    // Submit committee members to Firestore
     await FirebaseFirestore.instance.collection('committee_members').add({
       'name1': _controller1.text,
       'name2': _controller2.text,
@@ -172,6 +189,47 @@ class _BodyState extends State<Body> {
       committeeMembers =
           snapshot.docs.map<String>((doc) => doc['name1'] + ', ' + doc['name2']).toList();
     });
+  }
+
+  void _updateCommitteeMember(int memberNumber) {
+    // Implement update functionality for committee members
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Update Committee Member'),
+          content: TextFormField(
+            onChanged: (value) {
+              // Update corresponding text field based on memberNumber
+              setState(() {
+                if (memberNumber == 1) {
+                  _controller1.text = value;
+                } else if (memberNumber == 2) {
+                  _controller2.text = value;
+                }
+              });
+            },
+            decoration: InputDecoration(
+              hintText: 'Enter updated name...',
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('Update'),
+            ),
+          ],
+        );
+      },
+    );
   }
 }
 
