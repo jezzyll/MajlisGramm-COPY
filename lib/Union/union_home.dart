@@ -19,34 +19,38 @@ class _UnionExecutiveCommitteeState extends State<unionHomePage> {
   final TextEditingController _bioController = TextEditingController();
   late String _imageUrl = '';
 
-  Future<String> _uploadImage() async {
+  File? _imageFile;
+
+  Future<void> _getImage(ImageSource source) async {
     final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    final pickedFile = await picker.pickImage(source: source);
 
     if (pickedFile != null) {
-      File imageFile = File(pickedFile.path);
-
-      firebase_storage.Reference storageRef =
-          firebase_storage.FirebaseStorage.instance.ref().child('profile_images').child(
-              DateTime.now().millisecondsSinceEpoch.toString() + '.jpg');
-
-      firebase_storage.UploadTask uploadTask = storageRef.putFile(imageFile);
-
-      firebase_storage.TaskSnapshot taskSnapshot =
-          await uploadTask.whenComplete(() => null);
-
-      String imageUrl = await taskSnapshot.ref.getDownloadURL();
-      return imageUrl;
-    } else {
-      return '';
+      setState(() {
+        _imageFile = File(pickedFile.path);
+      });
     }
   }
 
-  Future<void> _addToFirestore() async {
+  Future<String> _uploadImage(File imageFile) async {
+    firebase_storage.Reference storageRef =
+        firebase_storage.FirebaseStorage.instance.ref().child('profile_images').child(
+            DateTime.now().millisecondsSinceEpoch.toString() + '.jpg');
+
+    firebase_storage.UploadTask uploadTask = storageRef.putFile(imageFile);
+
+    firebase_storage.TaskSnapshot taskSnapshot =
+        await uploadTask.whenComplete(() => null);
+
+    String imageUrl = await taskSnapshot.ref.getDownloadURL();
+    return imageUrl;
+  }
+
+  Future<void> _addToFirestore(String imageUrl) async {
     await FirebaseFirestore.instance.collection('executive_committee').add({
       'name': _nameController.text,
       'bio': _bioController.text,
-      'image_url': _imageUrl,
+      'image_url': imageUrl,
     });
   }
 
@@ -99,8 +103,15 @@ class _UnionExecutiveCommitteeState extends State<unionHomePage> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             CircleAvatar(
-                              backgroundImage: NetworkImage(_imageUrl),
+                              backgroundImage:
+                                  _imageFile != null ? FileImage(_imageFile!) : null,
                               radius: 50,
+                            ),
+                            ElevatedButton(
+                              onPressed: () {
+                                _getImage(ImageSource.gallery);
+                              },
+                              child: Text('Select Image'),
                             ),
                             TextField(
                               controller: _nameController,
@@ -120,11 +131,13 @@ class _UnionExecutiveCommitteeState extends State<unionHomePage> {
                       actions: [
                         TextButton(
                           onPressed: () async {
-                            String imageUrl = await _uploadImage();
-                            setState(() {
-                              _imageUrl = imageUrl;
-                            });
-                            await _addToFirestore();
+                            if (_imageFile != null) {
+                              String imageUrl = await _uploadImage(_imageFile!);
+                              setState(() {
+                                _imageUrl = imageUrl;
+                              });
+                              await _addToFirestore(imageUrl);
+                            }
                             Navigator.of(context).pop();
                           },
                           child: Text('OK'),
