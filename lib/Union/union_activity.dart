@@ -6,12 +6,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
 
 
-class UnionACtivity extends StatefulWidget {
+class UnionActivity extends StatefulWidget {
   @override
   _NotificationPageState createState() => _NotificationPageState();
 }
 
-class _NotificationPageState extends State<UnionACtivity> {
+class _NotificationPageState extends State<UnionActivity> {
   List<String> imageUrls = [];
 
   Future<void> _pickImage(ImageSource source) async {

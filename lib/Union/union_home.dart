@@ -1,255 +1,182 @@
-import 'package:carousel_slider/carousel_controller.dart';
-import 'package:carousel_slider/carousel_slider.dart';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_111_copy/Union/SubCommittee/union_sub_committee.dart';
 import 'package:flutter_application_111_copy/Union/union_activity.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:image_picker/image_picker.dart';
 
-class UnionImageSlider extends StatefulWidget {
-  const UnionImageSlider({super.key});
+class unionHomePage extends StatefulWidget {
+  const unionHomePage({Key? key}) : super(key: key);
 
   @override
-  State<UnionImageSlider> createState() => _ImageSliderState();
+  _UnionExecutiveCommitteeState createState() =>
+      _UnionExecutiveCommitteeState();
 }
 
-class _ImageSliderState extends State<UnionImageSlider> {
-  List imageList= [
-    {"id":1, "image_path": 'assets/images/cat.jpg'},
-    {"id":2, "image_path": 'assets/images/dna.jpg'},
-    {"id":3, "image_path": 'assets/images/sunflower.jpg'},
-  ];
-  final CarouselController carouselController= CarouselController();
-  int currentIndex=0;
-    @override
+class _UnionExecutiveCommitteeState extends State<unionHomePage> {
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _bioController = TextEditingController();
+  late String _imageUrl = '';
+
+  Future<String> _uploadImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      File imageFile = File(pickedFile.path);
+
+      firebase_storage.Reference storageRef =
+          firebase_storage.FirebaseStorage.instance.ref().child('profile_images').child(
+              DateTime.now().millisecondsSinceEpoch.toString() + '.jpg');
+
+      firebase_storage.UploadTask uploadTask = storageRef.putFile(imageFile);
+
+      firebase_storage.TaskSnapshot taskSnapshot =
+          await uploadTask.whenComplete(() => null);
+
+      String imageUrl = await taskSnapshot.ref.getDownloadURL();
+      return imageUrl;
+    } else {
+      return '';
+    }
+  }
+
+  Future<void> _addToFirestore() async {
+    await FirebaseFirestore.instance.collection('executive_committee').add({
+      'name': _nameController.text,
+      'bio': _bioController.text,
+      'image_url': _imageUrl,
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
         title: const Text("Union"),
         backgroundColor: Colors.teal,
-        ),
-        body: SingleChildScrollView(
-          child: Column(children: [
-            Stack(
-              children: [
-                InkWell(
-                  onTap: (){
-                    print(currentIndex);
-                  },
-                  child: CarouselSlider(
-                    items: imageList 
-                    .map(
-                      (item) => Image.asset(
-                        item ['image_path'],
-                        fit: BoxFit.cover,
-                        width: double.infinity,
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            StreamBuilder(
+              stream: FirebaseFirestore.instance
+                  .collection('executive_committee')
+                  .snapshots(),
+              builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return CircularProgressIndicator();
+                }
+                final committeeMembers = snapshot.data!.docs;
+                return Column(
+                  children: committeeMembers.map((member) {
+                    final name = member['name'];
+                    final bio = member['bio'];
+                    final imageUrl = member['image_url'];
+                    return ListTile(
+                      leading: CircleAvatar(
+                        backgroundImage: NetworkImage(imageUrl),
+                      ),
+                      title: Text(name),
+                      subtitle: Text(bio),
+                    );
+                  }).toList(),
+                );
+              },
+            ),
+            ElevatedButton(
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text('Add Member'),
+                      content: Container(
+                        width: double.maxFinite,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            CircleAvatar(
+                              backgroundImage: NetworkImage(_imageUrl),
+                              radius: 50,
+                            ),
+                            TextField(
+                              controller: _nameController,
+                              decoration: InputDecoration(
+                                labelText: 'Name',
+                              ),
+                            ),
+                            TextField(
+                              controller: _bioController,
+                              decoration: InputDecoration(
+                                labelText: 'Bio',
+                              ),
+                            ),
+                          ],
                         ),
-                        )
-                        .toList(),
-                        carouselController: carouselController,
-                        options: CarouselOptions(
-                          scrollPhysics: const BouncingScrollPhysics(),
-                          autoPlay: true,
-                          aspectRatio: 2,
-                          viewportFraction: 1,
-                          onPageChanged: (index, reason) {
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () async {
+                            String imageUrl = await _uploadImage();
                             setState(() {
-                              currentIndex=index;
+                              _imageUrl = imageUrl;
                             });
+                            await _addToFirestore();
+                            Navigator.of(context).pop();
                           },
-                          ),
-        
-                    ),
-                ),
-                Positioned(
-                  bottom: 10,
-                  left: 0,
-                  right: 0,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: imageList.asMap().entries.map((entry){
-                      print(entry);
-                      print(entry.key);
-                      return GestureDetector(
-                        onTap: () => carouselController.animateToPage(entry.key),
-                        child: Container(
-                          width: currentIndex==entry.key ? 17 : 7,
-                          height: 7.0,
-                          margin: const EdgeInsets.symmetric(
-                            horizontal: 3.0,
-                          ),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: currentIndex==entry.key
-                            ? Colors.red 
-                            :Colors.teal ,
-                          ),
+                          child: Text('OK'),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Text('Cancel'),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+              child: Text('Add Member'),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => UnionSubcommittee(),
                         ),
                       );
-                    }).toList(),
-                  )
-                  )
+                    },
+                    child: Text('Sub-committee'),
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => UnionActivity(),
+                      ),
+                    ).then((value) {
+                      setState(() {});
+                    });
+                  },
+                  child: Text('Activities'),
+                ),
               ],
-            ),
-            Padding(padding: EdgeInsets.all(10)),
-            Text("Executive Committee",
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.teal,
-            ),
-            ),
-            Padding(padding: EdgeInsets.all(10)),
-            SingleChildScrollView(),
-            ListView(
-              shrinkWrap: true,
-          children:  [
-            ExpansionTile(
-              leading:
-            CircleAvatar(child: Image.asset('assets/images/1.jpg')),
-            title: Text("Munavar Hafiz"),
-        
-            children: [
-              Text('He is the chairman of majlis wafy college'),
-              Text('E-mail: munnu@gmail.com'),
-            ],
-        
-            expandedAlignment: Alignment.center,
-            onExpansionChanged: (bool expaned){
-              if (expaned){
-                print('List is expaned');
-              }else{
-                print('List is collapsed');
-              }
-            },
-            ),
-            ExpansionTile(
-              leading:
-            CircleAvatar(child: Image.asset('assets/images/1.jpg')),
-            title: Text("Yaseen MT"),
-        
-            children: [
-              Text('He is the secratery of majlis wafy college'),
-              Text('E-mail: yaseen@gmail.com'),
-            ],
-        
-            expandedAlignment: Alignment.center,
-            onExpansionChanged: (bool expaned){
-              if (expaned){
-                print('List is expaned');
-              }else{
-                print('List is collapsed');
-              }
-            },
-            ),
-            ExpansionTile(
-              leading:
-            CircleAvatar(child: Image.asset('assets/images/1.jpg')),
-            title: Text("Khaleel Jibran"),
-        
-            children: [
-              Text('He is the treasurer of majlis wafy college'),
-              Text('E-mail: jibran@gmail.com'),
-            ],
-        
-            expandedAlignment: Alignment.center,
-            onExpansionChanged: (bool expaned){
-              if (expaned){
-                print('List is expaned');
-              }else{
-                print('List is collapsed');
-              }
-            },
-            ),
-            ExpansionTile(
-              leading:
-            CircleAvatar(child: Image.asset('assets/images/1.jpg')),
-            title: Text("Thabsheer"),
-        
-            children: [
-              Text('He is the vice-chairman of majlis wafy college'),
-              Text('E-mail: thabsheer@gmail.com'),
-            ],
-        
-            expandedAlignment: Alignment.center,
-            onExpansionChanged: (bool expaned){
-              if (expaned){
-                print('List is expaned');
-              }else{
-                print('List is collapsed');
-              }
-            },
-            ),
-            ExpansionTile(
-              leading:
-            CircleAvatar(child: Image.asset('assets/images/1.jpg')),
-            title: Text("Abshir"),
-        
-            children: [
-              Text('He is the joint-secratery of majlis wafy college'),
-              Text('E-mail: abshir@gmail.com'),
-            ],
-        
-            expandedAlignment: Alignment.center,
-            onExpansionChanged: (bool expaned){
-              if (expaned){
-                print('List is expaned');
-              }else{
-                print('List is collapsed');
-              }
-            },
-            ),
-            ExpansionTile(
-              leading:
-            CircleAvatar(child: Image.asset('assets/images/1.jpg')),
-            title: Text("Jazeel AV"),
-        
-            children: [
-              Text('He is the CUC of majlis wafy college'),
-              Text('E-mail: jzyl@gmail.com'),
-            ],
-        
-            expandedAlignment: Alignment.center,
-            onExpansionChanged: (bool expaned){
-              if (expaned){
-                print('List is expaned');
-              }else{
-                print('List is collapsed');
-              }
-            },
             ),
           ],
-          ),
-          Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: ElevatedButton( 
-                    child: Text('Sub-committee'),
-                    onPressed: () {
-                      Navigator.push(context, 
-            MaterialPageRoute(builder: (context) => UnionSubcommittee(),
-            ),
-            );
-            },
-            ),
-            ),
-           ElevatedButton( 
-          child: Text('Activities'),
-          onPressed: () {
-            Navigator.push(context, 
-            MaterialPageRoute(builder: (context) => UnionACtivity())).then((value) {
-              setState(() {});
-            }
-            );
-            
-          },
-          ),
-              ],
-              ),
-              ], 
-              ),
         ),
+      ),
     );
   }
 }

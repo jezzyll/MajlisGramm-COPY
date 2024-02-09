@@ -59,7 +59,7 @@ class _MajlisgramHomeState extends State<MajlisgramHome> {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => UnionImageSlider())).then((value) {
+                    builder: (context) => unionHomePage())).then((value) {
               setState(() {});
             });
           },
