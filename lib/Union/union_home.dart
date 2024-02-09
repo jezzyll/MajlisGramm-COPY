@@ -65,6 +65,7 @@ class _UnionExecutiveCommitteeState extends State<unionHomePage> {
       body: SingleChildScrollView(
         child: Column(
           children: [
+            // Display Executive Committee members from Firestore
             StreamBuilder(
               stream: FirebaseFirestore.instance
                   .collection('executive_committee')
@@ -103,15 +104,28 @@ class _UnionExecutiveCommitteeState extends State<unionHomePage> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             CircleAvatar(
-                              backgroundImage:
-                                  _imageFile != null ? FileImage(_imageFile!) : null,
+                              backgroundImage: _imageFile != null
+                                  ? FileImage(_imageFile!)
+                                  : null,
                               radius: 50,
                             ),
-                            ElevatedButton(
-                              onPressed: () {
-                                _getImage(ImageSource.gallery);
-                              },
-                              child: Text('Select Image'),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                ElevatedButton(
+                                  onPressed: () {
+                                    _getImage(ImageSource.camera);
+                                  },
+                                  child: Text('Take Photo'),
+                                ),
+                                SizedBox(width: 16),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    _getImage(ImageSource.gallery);
+                                  },
+                                  child: Text('Choose from Gallery'),
+                                ),
+                              ],
                             ),
                             TextField(
                               controller: _nameController,
