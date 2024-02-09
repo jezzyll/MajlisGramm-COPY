@@ -110,11 +110,6 @@ class _BodyState extends State<Body> {
           child: Text('Submit'),
         ),
         SizedBox(height: 20),
-        // Display data fetched from Firestore
-        // Column(
-        //   children: committeeMembers.map((member) => Text(member)).toList(),
-        // ),
-        SizedBox(height: 20),
         Text(
           "NEW UPDATES",
           style: TextStyle(
@@ -222,7 +217,9 @@ class _BodyState extends State<Body> {
               child: Text('Cancel'),
             ),
             TextButton(
-              onPressed: () {
+              onPressed: () async {
+                // Update data in Firestore
+                await _updateDataInFirestore(memberNumber);
                 Navigator.pop(context);
               },
               child: Text('Update'),
@@ -231,6 +228,13 @@ class _BodyState extends State<Body> {
         );
       },
     );
+  }
+
+  Future<void> _updateDataInFirestore(int memberNumber) async {
+    String fieldName = memberNumber == 1 ? 'name1' : 'name2';
+    await FirebaseFirestore.instance.collection('committee_members').doc('YOUR_DOCUMENT_ID').update({
+      fieldName: memberNumber == 1 ? _controller1.text : _controller2.text,
+    });
   }
 }
 
