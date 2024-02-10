@@ -1,9 +1,10 @@
 import 'dart:io';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:path/path.dart';
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:path/path.dart';
 
 class UserProfilePage extends StatefulWidget {
   final String userId;
@@ -29,15 +30,12 @@ class _UserProfilePageState extends State<UserProfilePage> {
     return await FirebaseFirestore.instance.collection('users').doc(widget.userId).get();
   }
 
-  Future<void> _uploadImage() async {
+  Future<void> _uploadImage(ImageSource source) async {
     final ImagePicker _picker = ImagePicker();
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery); // You can change this to ImageSource.camera for capturing a new image.
+    final XFile? image = await _picker.pickImage(source: source); 
 
     if (image == null) return;
 
-    // Upload image to Firestore Storage
-    // Code to upload the image and get the URL
-    // For demonstration purposes, let's assume you have a function to upload the image and return the URL.
     String imageUrl = await uploadImageToFirestoreStorage(image);
 
     setState(() {
@@ -51,16 +49,15 @@ class _UserProfilePageState extends State<UserProfilePage> {
   }
 
   Future<String> uploadImageToFirestoreStorage(XFile image) async {
-  final String fileName = basename(image.path);
-  final Reference storageReference = FirebaseStorage.instance.ref().child('images/$fileName');
+    final String fileName = basename(image.path);
+    final Reference storageReference = FirebaseStorage.instance.ref().child('images/$fileName');
   
-  final UploadTask uploadTask = storageReference.putFile(File(image.path));
-  final TaskSnapshot downloadUrl = (await uploadTask);
-  final String url = await downloadUrl.ref.getDownloadURL();
+    final UploadTask uploadTask = storageReference.putFile(File(image.path));
+    final TaskSnapshot downloadUrl = await uploadTask.whenComplete(() => null);
+    final String url = await downloadUrl.ref.getDownloadURL();
 
-  return url;
-}
-
+    return url;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -91,11 +88,11 @@ class _UserProfilePageState extends State<UserProfilePage> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   GestureDetector(
-                    onTap: _uploadImage, // Function to open image picker
+                    onTap: () => _showImageSource(context),
                     child: CircleAvatar(
                       radius: 50,
-                      backgroundImage: _imageUrl.isNotEmpty ? NetworkImage(_imageUrl) : null, // Show the selected image if available
-                      child: _imageUrl.isEmpty ? Icon(Icons.camera_alt) : null, // Show camera icon if no image
+                      backgroundImage: _imageUrl.isNotEmpty ? NetworkImage(_imageUrl) : null,
+                      child: _imageUrl.isEmpty ? Icon(Icons.camera_alt) : null,
                     ),
                   ),
                   SizedBox(height: 20.0),
@@ -105,7 +102,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                   ),
                   SizedBox(height: 20.0),
                   SizedBox(
-                    width: 300, // Adjust the width as needed
+                    width: 300,
                     child: Column(
                       children: [
                         _buildInfoCard('Name', userData['name']),
@@ -124,6 +121,37 @@ class _UserProfilePageState extends State<UserProfilePage> {
           );
         },
       ),
+    );
+  }
+
+  void _showImageSource(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              ListTile(
+                leading: Icon(Icons.camera_alt),
+                title: Text('Take Photo'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _uploadImage(ImageSource.camera);
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.photo_library),
+                title: Text('Choose from Gallery'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _uploadImage(ImageSource.gallery);
+                },
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
