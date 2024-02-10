@@ -44,26 +44,39 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
           var userData = snapshot.data!.data() as Map<String, dynamic>;
 
-          return SingleChildScrollView(
-            padding: EdgeInsets.all(20.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                CircleAvatar(
-                  radius: 50,
-                  backgroundImage: NetworkImage('https://via.placeholder.com/150'),
-                ),
-                SizedBox(height: 20.0),
-                Text(
-                  "Hi, it's me ${userData['name']}",
-                  style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
-                ),
-                SizedBox(height: 20.0),
-                _buildInfoCard('Name', userData['name']),
-                _buildInfoCard('Age', userData['age'].toString()),
-                _buildInfoCard('Email', userData['email']),
-                _buildInfoCard('Blood Group', userData['blood']),
-              ],
+          return Center(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.all(20.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  CircleAvatar(
+                    radius: 50,
+                    backgroundImage: NetworkImage('https://via.placeholder.com/150'),
+                  ),
+                  SizedBox(height: 20.0),
+                  Text(
+                    "Hi, it's me ${userData['name']}",
+                    style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 20.0),
+                  SizedBox(
+                    width: 300, // Adjust the width as needed
+                    child: Column(
+                      children: [
+                        _buildInfoCard('Name', userData['name']),
+                        SizedBox(height: 10),
+                        _buildInfoCard('Age', userData['age'].toString()),
+                        SizedBox(height: 10),
+                        _buildInfoCard('Email', userData['email']),
+                        SizedBox(height: 10),
+                        _buildInfoCard('Blood Group', userData['blood']),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           );
         },
@@ -72,20 +85,23 @@ class _UserProfilePageState extends State<UserProfilePage> {
   }
 
   Widget _buildInfoCard(String title, String value) {
-    return Card(
-      elevation: 3.0,
-      child: Padding(
-        padding: EdgeInsets.all(10.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 5.0),
-            Text(value),
-          ],
+    return Container(
+      width: double.infinity,
+      child: Card(
+        elevation: 3.0,
+        child: Padding(
+          padding: EdgeInsets.all(10.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 5.0),
+              Text(value),
+            ],
+          ),
         ),
       ),
     );
