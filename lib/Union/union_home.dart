@@ -163,6 +163,12 @@ class _UnionExecutiveCommitteeState extends State<unionHomePage> {
                                 _imageUrl = imageUrl;
                               });
                               await _addToFirestore(imageUrl);
+                              // Clear the text fields and image selection after adding to Firestore
+                              _nameController.clear();
+                              _bioController.clear();
+                              setState(() {
+                                _imageFile = null;
+                              });
                             }
                             Navigator.of(context).pop();
                           },
