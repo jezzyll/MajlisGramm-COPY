@@ -109,7 +109,7 @@ class _UnionExecutiveCommitteeState extends State<unionHomePage> {
                   builder: (BuildContext context) {
                     return AlertDialog(
                       title: Text('Add Member'),
-                      content: SingleChildScrollView( // Wrap with SingleChildScrollView
+                      content: SingleChildScrollView(
                         child: Container(
                           width: double.maxFinite,
                           child: Column(
@@ -124,18 +124,22 @@ class _UnionExecutiveCommitteeState extends State<unionHomePage> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      _getImage(ImageSource.camera);
-                                    },
-                                    child: Text('Take Photo'),
+                                  Flexible( // Wrap with Flexible
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        _getImage(ImageSource.camera);
+                                      },
+                                      child: Text('Take Photo'),
+                                    ),
                                   ),
                                   SizedBox(width: 16),
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      _getImage(ImageSource.gallery);
-                                    },
-                                    child: Text('Choose from Gallery'),
+                                  Flexible( // Wrap with Flexible
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        _getImage(ImageSource.gallery);
+                                      },
+                                      child: Text('Choose from Gallery'),
+                                    ),
                                   ),
                                 ],
                               ),
