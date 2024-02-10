@@ -17,46 +17,16 @@ class UserProfilePage extends StatefulWidget {
 
 class _UserProfilePageState extends State<UserProfilePage> {
   late Future<DocumentSnapshot> _userFuture;
-  late String _imageUrl;
+  String? _imageUrl;
 
   @override
   void initState() {
     super.initState();
     _userFuture = _fetchUser();
-    _imageUrl = ''; // Initialize imageUrl
   }
 
   Future<DocumentSnapshot> _fetchUser() async {
     return await FirebaseFirestore.instance.collection('users').doc(widget.userId).get();
-  }
-
-  Future<void> _uploadImage(ImageSource source) async {
-    final ImagePicker _picker = ImagePicker();
-    final XFile? image = await _picker.pickImage(source: source); 
-
-    if (image == null) return;
-
-    String imageUrl = await uploadImageToFirestoreStorage(image);
-
-    setState(() {
-      _imageUrl = imageUrl;
-    });
-
-    // Update Firestore with the new image URL
-    await FirebaseFirestore.instance.collection('users').doc(widget.userId).update({
-      'profileImageUrl': _imageUrl,
-    });
-  }
-
-  Future<String> uploadImageToFirestoreStorage(XFile image) async {
-    final String fileName = basename(image.path);
-    final Reference storageReference = FirebaseStorage.instance.ref().child('images/$fileName');
-  
-    final UploadTask uploadTask = storageReference.putFile(File(image.path));
-    final TaskSnapshot downloadUrl = await uploadTask.whenComplete(() => null);
-    final String url = await downloadUrl.ref.getDownloadURL();
-
-    return url;
   }
 
   @override
@@ -79,6 +49,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
           }
 
           var userData = snapshot.data!.data() as Map<String, dynamic>;
+          _imageUrl ??= userData['profileImageUrl']; // Set _imageUrl if not set
 
           return Center(
             child: SingleChildScrollView(
@@ -91,8 +62,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
                     onTap: () => _showImageSource(context),
                     child: CircleAvatar(
                       radius: 50,
-                      backgroundImage: _imageUrl.isNotEmpty ? NetworkImage(_imageUrl) : null,
-                      child: _imageUrl.isEmpty ? Icon(Icons.camera_alt) : null,
+                      backgroundImage: _imageUrl != null ? NetworkImage(_imageUrl!) : null,
+                      child: _imageUrl == null ? Icon(Icons.camera_alt) : null,
                     ),
                   ),
                   SizedBox(height: 20.0),
@@ -155,6 +126,35 @@ class _UserProfilePageState extends State<UserProfilePage> {
     );
   }
 
+  Future<void> _uploadImage(ImageSource source) async {
+    final ImagePicker _picker = ImagePicker();
+    final XFile? image = await _picker.pickImage(source: source); 
+
+    if (image == null) return;
+
+    String imageUrl = await uploadImageToFirestoreStorage(image);
+
+    setState(() {
+      _imageUrl = imageUrl;
+    });
+
+    // Update Firestore with the new image URL
+    await FirebaseFirestore.instance.collection('users').doc(widget.userId).update({
+      'profileImageUrl': _imageUrl,
+    });
+  }
+
+  Future<String> uploadImageToFirestoreStorage(XFile image) async {
+    final String fileName = basename(image.path);
+    final Reference storageReference = FirebaseStorage.instance.ref().child('images/$fileName');
+  
+    final UploadTask uploadTask = storageReference.putFile(File(image.path));
+    final TaskSnapshot downloadUrl = await uploadTask.whenComplete(() => null);
+    final String url = await downloadUrl.ref.getDownloadURL();
+
+    return url;
+  }
+
   Widget _buildInfoCard(String title, String value) {
     return Container(
       width: double.infinity,
@@ -178,3 +178,4 @@ class _UserProfilePageState extends State<UserProfilePage> {
     );
   }
 }
+
