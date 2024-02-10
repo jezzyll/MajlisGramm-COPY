@@ -200,14 +200,8 @@ class ServicesPage extends StatelessWidget {
   }
 }
 
-class MePage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text('Me Page'),
-    );
-  }
-}
+
+
 
 void main() {
   runApp(MaterialApp(
