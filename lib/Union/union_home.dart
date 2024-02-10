@@ -59,7 +59,18 @@ class _UnionExecutiveCommitteeState extends State<unionHomePage> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const Text("Union"),
+        title: Column(
+          children: [
+            Text(
+              'College Union',
+              style: TextStyle(fontSize: 18),
+            ),
+            Text(
+              'Executive Committee',
+              style: TextStyle(fontSize: 14),
+            ),
+          ],
+        ),
         backgroundColor: Colors.teal,
       ),
       body: SingleChildScrollView(
@@ -81,11 +92,11 @@ class _UnionExecutiveCommitteeState extends State<unionHomePage> {
                     final bio = member['bio'];
                     final imageUrl = member['image_url'];
                     return ListTile(
+                      title: Text(name),
+                      subtitle: Text(bio),
                       leading: CircleAvatar(
                         backgroundImage: NetworkImage(imageUrl),
                       ),
-                      title: Text(name),
-                      subtitle: Text(bio),
                     );
                   }).toList(),
                 );
@@ -103,12 +114,12 @@ class _UnionExecutiveCommitteeState extends State<unionHomePage> {
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            CircleAvatar(
-                              backgroundImage: _imageFile != null
-                                  ? FileImage(_imageFile!)
-                                  : null,
-                              radius: 50,
-                            ),
+                            _imageFile != null
+                                ? CircleAvatar(
+                                    backgroundImage: FileImage(_imageFile!),
+                                    radius: 50,
+                                  )
+                                : Container(),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -146,7 +157,8 @@ class _UnionExecutiveCommitteeState extends State<unionHomePage> {
                         TextButton(
                           onPressed: () async {
                             if (_imageFile != null) {
-                              String imageUrl = await _uploadImage(_imageFile!);
+                              String imageUrl =
+                                  await _uploadImage(_imageFile!);
                               setState(() {
                                 _imageUrl = imageUrl;
                               });
