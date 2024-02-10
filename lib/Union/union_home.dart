@@ -109,48 +109,50 @@ class _UnionExecutiveCommitteeState extends State<unionHomePage> {
                   builder: (BuildContext context) {
                     return AlertDialog(
                       title: Text('Add Member'),
-                      content: Container(
-                        width: double.maxFinite,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            _imageFile != null
-                                ? CircleAvatar(
-                                    backgroundImage: FileImage(_imageFile!),
-                                    radius: 50,
-                                  )
-                                : Container(),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                ElevatedButton(
-                                  onPressed: () {
-                                    _getImage(ImageSource.camera);
-                                  },
-                                  child: Text('Take Photo'),
-                                ),
-                                SizedBox(width: 16),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    _getImage(ImageSource.gallery);
-                                  },
-                                  child: Text('Choose from Gallery'),
-                                ),
-                              ],
-                            ),
-                            TextField(
-                              controller: _nameController,
-                              decoration: InputDecoration(
-                                labelText: 'Name',
+                      content: SingleChildScrollView( // Wrap with SingleChildScrollView
+                        child: Container(
+                          width: double.maxFinite,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              _imageFile != null
+                                  ? CircleAvatar(
+                                      backgroundImage: FileImage(_imageFile!),
+                                      radius: 50,
+                                    )
+                                  : Container(),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      _getImage(ImageSource.camera);
+                                    },
+                                    child: Text('Take Photo'),
+                                  ),
+                                  SizedBox(width: 16),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      _getImage(ImageSource.gallery);
+                                    },
+                                    child: Text('Choose from Gallery'),
+                                  ),
+                                ],
                               ),
-                            ),
-                            TextField(
-                              controller: _bioController,
-                              decoration: InputDecoration(
-                                labelText: 'Bio',
+                              TextField(
+                                controller: _nameController,
+                                decoration: InputDecoration(
+                                  labelText: 'Name',
+                                ),
                               ),
-                            ),
-                          ],
+                              TextField(
+                                controller: _bioController,
+                                decoration: InputDecoration(
+                                  labelText: 'Bio',
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                       actions: [
