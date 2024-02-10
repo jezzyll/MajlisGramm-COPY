@@ -80,7 +80,7 @@ class _MajlisgramHomeState extends State<MajlisgramHome> {
       case 1:
         return ServicesPage();
       case 2:
-        return  UserProfilePage(userId: '',);
+        return  UserProfilePage(userId: '9JAKYeQUoLf9CWP0p3mF',);
       default:
         return Container();
     }
