@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserProfilePage extends StatefulWidget {
@@ -12,9 +11,7 @@ class UserProfilePage extends StatefulWidget {
 }
 
 class _UserProfilePageState extends State<UserProfilePage> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
   late Future<DocumentSnapshot> _userFuture;
-
 
   @override
   void initState() {
@@ -28,10 +25,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    String? _email = _auth.currentUser!.email;
     return Scaffold(
       appBar: AppBar(
-        title: Text('User Profile '"$_email"),
+        title: Text('User Profile'),
       ),
       body: FutureBuilder<DocumentSnapshot>(
         future: _userFuture,
@@ -59,7 +55,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                 ),
                 SizedBox(height: 20.0),
                 Text(
-                  "Hi, it's me $_email",
+                  "Hi, it's me ${userData['name']}",
                   style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 20.0),
