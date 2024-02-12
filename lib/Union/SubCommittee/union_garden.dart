@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 class UnionGarden extends StatelessWidget {
   const UnionGarden({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -17,17 +19,18 @@ class UnionGarden extends StatelessWidget {
     );
   }
 }
+
 class Body extends StatefulWidget {
   const Body({Key? key}) : super(key: key);
+
   @override
   State<Body> createState() => _BodyState();
 }
+
 class _BodyState extends State<Body> {
-  TextEditingController _controller1 = TextEditingController();
-  TextEditingController _controller2 = TextEditingController();
   // List to store data fetched from Firestore
-  List<String> committeeMembers = [];
   List<String> newUpdates = [];
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -52,18 +55,12 @@ class _BodyState extends State<Body> {
                 backgroundImage: AssetImage('assets/images/me.jpg'),
               ),
               SizedBox(height: 5),
-              TextFormField(
-                controller: _controller1,
-                decoration: InputDecoration(
-                  hintText: 'Enter name...',
-                  suffixIcon: IconButton(
-                    icon: Icon(Icons.edit),
-                    onPressed: () {
-                      // Implement update functionality for committee member 1
-                      _updateCommitteeMember(1);
-                    },
-                  ),
-                ),
+              ElevatedButton(
+                onPressed: () {
+                  // Implement functionality for adding committee member 1
+                  _addCommitteeMember(1);
+                },
+                child: Text('Add Committee'),
               ),
             ],
           ),
@@ -77,36 +74,16 @@ class _BodyState extends State<Body> {
                 backgroundImage: AssetImage('assets/images/PSC1.jpg'),
               ),
               SizedBox(height: 5),
-              TextFormField(
-                controller: _controller2,
-                decoration: InputDecoration(
-                  hintText: 'Enter name...',
-                  suffixIcon: IconButton(
-                    icon: Icon(Icons.edit),
-                    onPressed: () {
-                      // Implement update functionality for committee member 2
-                      _updateCommitteeMember(2);
-                    },
-                  ),
-                ),
+              ElevatedButton(
+                onPressed: () {
+                  // Implement functionality for adding committee member 2
+                  _addCommitteeMember(2);
+                },
+                child: Text('Add Committee'),
               ),
             ],
           ),
         ),
-        SizedBox(height: 20),
-        ElevatedButton(
-          onPressed: () async {
-            // Submit committee members to Firestore
-            await _submitToFirestore();
-            await _fetchDataFromFirestore(); // Fetch and display data after submit
-          },
-          child: Text('Submit'),
-        ),
-        SizedBox(height: 20),
-        // Display data fetched from Firestore
-        // Column(
-        //   children: committeeMembers.map((member) => Text(member)).toList(),
-        // ),
         SizedBox(height: 20),
         Text(
           "NEW UPDATES",
@@ -141,6 +118,7 @@ class _BodyState extends State<Body> {
       ],
     );
   }
+
   Widget _buildUpdateContainer(String update) {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 5),
@@ -151,7 +129,7 @@ class _BodyState extends State<Body> {
         border: Border.all(color: Colors.grey),
         borderRadius: BorderRadius.circular(10),
       ),
-      child: SingleChildScrollView( // Use SingleChildScrollView to handle overflow
+      child: SingleChildScrollView(
         child: Text(
           update,
           style: TextStyle(fontSize: 16),
@@ -159,48 +137,21 @@ class _BodyState extends State<Body> {
       ),
     );
   }
-  Future<void> _submitToFirestore() async {
-    // Submit committee members to Firestore
-    await FirebaseFirestore.instance.collection('committee_members').add({
-      'name1': _controller1.text,
-      'name2': _controller2.text,
-    });
-    // Clear text fields after submission
-    _controller1.clear();
-    _controller2.clear();
-  }
-  Future<void> _fetchDataFromFirestore() async {
-    // Fetch data from Firestore and update the state
-    final snapshot = await FirebaseFirestore.instance.collection('committee_members').get();
-    setState(() {
-      committeeMembers =
-          snapshot.docs.map<String>((doc) => doc['name1'] + ', ' + doc['name2']).toList();
-      // Update text field controllers with fetched data
-      _controller1.text = committeeMembers.isNotEmpty ? committeeMembers[0] : '';
-      _controller2.text = committeeMembers.length > 1 ? committeeMembers[1] : '';
-    });
-  }
-  void _updateCommitteeMember(int memberNumber) {
-    // Implement update functionality for committee members
+
+  void _addCommitteeMember(int memberNumber) {
+    // Implement functionality for adding committee members
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Update Committee Member'),
+          title: Text('Add Committee Member'),
           content: TextFormField(
-            onChanged: (value) {
-              // Update corresponding text field based on memberNumber
-              setState(() {
-                if (memberNumber == 1) {
-                  _controller1.text = value;
-                } else if (memberNumber == 2) {
-                  _controller2.text = value;
-                }
-              });
-            },
             decoration: InputDecoration(
-              hintText: 'Enter updated name...',
+              hintText: 'Enter name...',
             ),
+            onChanged: (value) {
+              // Update UI or perform necessary actions
+            },
           ),
           actions: [
             TextButton(
@@ -210,30 +161,22 @@ class _BodyState extends State<Body> {
               child: Text('Cancel'),
             ),
             TextButton(
-              
-              onPressed: () async {
-                // Update data in Firestore
-                await _updateDataInFirestore(memberNumber);
+              onPressed: () {
+                // Add functionality to save committee member to Firestore or perform other actions
                 Navigator.pop(context);
               },
-              child: Text('Update'),
+              child: Text('Save'),
             ),
           ],
         );
       },
     );
   }
-
-  Future<void> _updateDataInFirestore(int memberNumber) async {
-    String fieldName = memberNumber == 1 ? 'name1' : 'name2';
-    await FirebaseFirestore.instance.collection('committee_members').doc('YOUR_DOCUMENT_ID').update({
-      fieldName: memberNumber == 1 ? _controller1.text : _controller2.text,
-    });
-  }
 }
 
 class AdditionalInformationPage extends StatelessWidget {
   TextEditingController _additionalInfoController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -278,6 +221,7 @@ class AdditionalInformationPage extends StatelessWidget {
     );
   }
 }
+
 void main() {
   runApp(UnionGarden());
 }
