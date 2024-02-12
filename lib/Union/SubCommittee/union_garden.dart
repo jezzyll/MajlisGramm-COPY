@@ -14,7 +14,11 @@ class UnionGarden extends StatelessWidget {
           backgroundColor: Colors.teal,
           title: Center(child: Text("Garden")),
         ),
-        body: SingleChildScrollView(child: Body()),
+        body: SingleChildScrollView(
+          child: Center(
+            child: Body(),
+          ),
+        ),
       ),
     );
   }
@@ -29,6 +33,7 @@ class Body extends StatefulWidget {
 
 class _BodyState extends State<Body> {
   // List to store data fetched from Firestore
+  List<String> committeeMembers = [];
   List<String> newUpdates = [];
 
   @override
@@ -57,7 +62,6 @@ class _BodyState extends State<Body> {
               SizedBox(height: 5),
               ElevatedButton(
                 onPressed: () {
-                  // Implement functionality for adding committee member 1
                   _addCommitteeMember(1);
                 },
                 child: Text('Add Committee'),
@@ -76,13 +80,27 @@ class _BodyState extends State<Body> {
               SizedBox(height: 5),
               ElevatedButton(
                 onPressed: () {
-                  // Implement functionality for adding committee member 2
                   _addCommitteeMember(2);
                 },
                 child: Text('Add Committee'),
               ),
             ],
           ),
+        ),
+        SizedBox(height: 20),
+        ElevatedButton(
+          onPressed: () async {
+            // Submit committee members to Firestore
+            await _submitToFirestore();
+            // Fetch and display data after submit
+            await _fetchDataFromFirestore();
+          },
+          child: Text('Submit'),
+        ),
+        SizedBox(height: 20),
+        // Display data fetched from Firestore
+        Column(
+          children: committeeMembers.map((member) => Text(member)).toList(),
         ),
         SizedBox(height: 20),
         Text(
@@ -138,8 +156,24 @@ class _BodyState extends State<Body> {
     );
   }
 
+  Future<void> _submitToFirestore() async {
+    // Submit committee members to Firestore
+    await FirebaseFirestore.instance.collection('committee_members').add({
+      'name1': 'Name 1',
+      'name2': 'Name 2',
+    });
+  }
+
+  Future<void> _fetchDataFromFirestore() async {
+    // Fetch data from Firestore and update the state
+    final snapshot = await FirebaseFirestore.instance.collection('committee_members').get();
+    setState(() {
+      committeeMembers =
+          snapshot.docs.map<String>((doc) => doc['name1'] + ', ' + doc['name2']).toList();
+    });
+  }
+
   void _addCommitteeMember(int memberNumber) {
-    // Implement functionality for adding committee members
     showDialog(
       context: context,
       builder: (context) {
@@ -161,7 +195,7 @@ class _BodyState extends State<Body> {
               child: Text('Cancel'),
             ),
             TextButton(
-              onPressed: () {
+              onPressed: () async {
                 // Add functionality to save committee member to Firestore or perform other actions
                 Navigator.pop(context);
               },
