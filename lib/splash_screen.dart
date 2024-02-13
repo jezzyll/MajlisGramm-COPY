@@ -12,7 +12,10 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    navigateUser();
+    // Add a delay of 2-3 seconds before navigating the user
+    Future.delayed(Duration(seconds: 3), () {
+      navigateUser();
+    });
   }
 
   void navigateUser() async {
@@ -39,7 +42,7 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.network("https://t4.ftcdn.net/jpg/01/43/84/53/360_F_143845386_xvIOfP21kVuAHa8BLxVo15akFIoA1Wko.jpg"),// Your app logo image widget goes here
+            Image.network("https://www.48hourslogo.com/48hourslogo_data/2015/07/15/201507151540519778.jpg"),// Your app logo image widget goes here
             // Example: Image.asset('assets/images/logo.png'),
 
             SizedBox(height: 20),
