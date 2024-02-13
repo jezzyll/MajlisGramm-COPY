@@ -1,10 +1,11 @@
 import 'dart:io';
-
+import 'package:flutter_application_111_copy/Auth/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path/path.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class UserProfilePage extends StatefulWidget {
   final String userId;
@@ -18,6 +19,8 @@ class UserProfilePage extends StatefulWidget {
 class _UserProfilePageState extends State<UserProfilePage> {
   late Future<DocumentSnapshot> _userFuture;
   String? _imageUrl;
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   void initState() {
@@ -34,6 +37,18 @@ class _UserProfilePageState extends State<UserProfilePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('User Profile'),
+        actions: [
+          IconButton(
+            onPressed: () {
+              _auth.signOut();
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => HomeScreen()),
+              );
+            },
+            icon: Icon(Icons.logout),
+          ),
+        ],
       ),
       body: FutureBuilder<DocumentSnapshot>(
         future: _userFuture,
@@ -128,7 +143,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
   Future<void> _uploadImage(ImageSource source) async {
     final ImagePicker _picker = ImagePicker();
-    final XFile? image = await _picker.pickImage(source: source); 
+    final XFile? image = await _picker.pickImage(source: source);
 
     if (image == null) return;
 
@@ -147,7 +162,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
   Future<String> uploadImageToFirestoreStorage(XFile image) async {
     final String fileName = basename(image.path);
     final Reference storageReference = FirebaseStorage.instance.ref().child('images/$fileName');
-  
+
     final UploadTask uploadTask = storageReference.putFile(File(image.path));
     final TaskSnapshot downloadUrl = await uploadTask.whenComplete(() => null);
     final String url = await downloadUrl.ref.getDownloadURL();
@@ -178,4 +193,3 @@ class _UserProfilePageState extends State<UserProfilePage> {
     );
   }
 }
-
