@@ -58,9 +58,9 @@ class _MajlisgramHomeState extends State<MajlisgramHome> {
           },
           onUnionTapped: () {
             Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => unionHomePage())).then((value) {
+              context,
+              MaterialPageRoute(builder: (context) => unionHomePage()),
+            ).then((value) {
               setState(() {});
             });
           },
@@ -80,7 +80,7 @@ class _MajlisgramHomeState extends State<MajlisgramHome> {
       case 1:
         return ServicesPage();
       case 2:
-        return  UserProfilePage(userId: '9JAKYeQUoLf9CWP0p3mF',);
+        return UserProfilePage(userId: '9JAKYeQUoLf9CWP0p3mF');
       default:
         return Container();
     }
@@ -134,30 +134,30 @@ class MajlisgramHomePage extends StatelessWidget {
         Divider(),
         Expanded(
           flex: 4,
-          child: Container(
-            padding: EdgeInsets.all(16.0),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    _buildRedSquare('Office', onOfficeTapped),
-                    _buildRedSquare('Staff', onStaffTapped),
+                    _buildSquare(Icons.business, 'Office', onOfficeTapped),
+                    _buildSquare(Icons.people, 'Staff', onStaffTapped),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    _buildRedSquare('Union', onUnionTapped),
-                    _buildRedSquare('Hostel', onHostelTapped),
+                    _buildSquare(Icons.group, 'Union', onUnionTapped),
+                    _buildSquare(Icons.apartment, 'Hostel', onHostelTapped),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    _buildRedSquare('Library', onLibraryTapped),
-                    _buildRedSquare('Canteen', onCanteenTapped),
+                    _buildSquare(Icons.book, 'Library', onLibraryTapped),
+                    _buildSquare(Icons.fastfood, 'Canteen', onCanteenTapped),
                   ],
                 ),
               ],
@@ -168,22 +168,32 @@ class MajlisgramHomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildRedSquare(String title, VoidCallback? onTap) {
+  Widget _buildSquare(
+      IconData icon, String title, VoidCallback? onTap) {
     return GestureDetector(
       onTap: onTap,
       child: Card(
+        color: Colors.red,
         child: Container(
           width: 150,
           height: 100,
-          color: Colors.red,
-          child: Center(
-            child: Text(
-              title,
-              style: TextStyle(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                icon,
+                size: 40,
                 color: Colors.white,
-                fontWeight: FontWeight.bold,
               ),
-            ),
+              SizedBox(height: 8),
+              Text(
+                title,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -199,9 +209,6 @@ class ServicesPage extends StatelessWidget {
     );
   }
 }
-
-
-
 
 void main() {
   runApp(MaterialApp(
