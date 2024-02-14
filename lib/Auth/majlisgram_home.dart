@@ -169,11 +169,14 @@ class MajlisgramHomePage extends StatelessWidget {
   }
 
   Widget _buildSquare(
-      IconData icon, String title, VoidCallback? onTap) {
+    IconData icon,
+    String title,
+    VoidCallback? onTap,
+  ) {
     return GestureDetector(
       onTap: onTap,
       child: Card(
-        color: Colors.red,
+        color: Colors.lightBlue, // Changed card color
         child: Container(
           width: 150,
           height: 100,
