@@ -7,8 +7,15 @@ class SplashScreen extends StatefulWidget {
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
+  
 
 class _SplashScreenState extends State<SplashScreen> {
+  
+  initSharedPrefs()async{
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+  }
+
+    
   @override
   void initState() {
     super.initState();

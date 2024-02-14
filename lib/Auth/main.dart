@@ -11,6 +11,9 @@ import 'package:flutter_application_111_copy/firebase_options.dart';
 import 'package:flutter_application_111_copy/Auth/home_screen.dart';
 import 'package:flutter_application_111_copy/Auth/splash_screen.dart';
 
+
+
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
