@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class CanteenOrderFood extends StatefulWidget {
   const CanteenOrderFood({Key? key});
@@ -15,21 +16,24 @@ class _CanteenOrderFoodState extends State<CanteenOrderFood> {
   @override
   void initState() {
     super.initState();
-    // Call a function to fetch counts from Firestore
+    // Initialize states and fetch user's choice from Firestore
+    orderCount = 0;
+    noOrderCount = 0;
     _fetchCounts();
   }
 
   // Function to fetch counts from Firestore
   void _fetchCounts() async {
     try {
-      // Reference to the document in Firestore
-      DocumentSnapshot<Map<String, dynamic>> snapshot =
-          await FirebaseFirestore.instance.collection('canteen').doc('order').get();
+      // Retrieve counts from Firestore and update UI
+      DocumentSnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore.instance
+          .collection('canteen')
+          .doc('order')
+          .get();
 
-      // Retrieve the counts from the document
       setState(() {
-        orderCount = (snapshot.data()?['orderCount'] ?? 0) as int;
-        noOrderCount = (snapshot.data()?['noOrderCount'] ?? 0) as int;
+        orderCount = snapshot.data()?['orderCount'] ?? 0;
+        noOrderCount = snapshot.data()?['noOrderCount'] ?? 0;
       });
     } catch (error) {
       print('Error fetching counts: $error');
@@ -57,6 +61,58 @@ class _CanteenOrderFoodState extends State<CanteenOrderFood> {
     }
   }
 
+  // Function to show the order dialog
+  void _showOrderDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        bool? _userChoice;
+
+        return AlertDialog(
+          title: Text('Order Food'),
+          content: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  RadioListTile(
+                    title: Text('Yes'),
+                    value: true,
+                    groupValue: _userChoice,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        _userChoice = value;
+                      });
+                    },
+                  ),
+                  RadioListTile(
+                    title: Text('No'),
+                    value: false,
+                    groupValue: _userChoice,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        _userChoice = value;
+                      });
+                    },
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      if (_userChoice != null) {
+                        Navigator.of(context).pop();
+                        _updateCounts(_userChoice!);
+                      }
+                    },
+                    child: Text('OK'),
+                  ),
+                ],
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -68,34 +124,13 @@ class _CanteenOrderFoodState extends State<CanteenOrderFood> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              'Do you want to order food?',
-              style: TextStyle(fontSize: 18),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Radio(
-                  value: true,
-                  groupValue: orderCount,
-                  onChanged: (value) {
-                    _updateCounts(true);
-                  },
-                ),
-                Text('Yes'),
-                Radio(
-                  value: false,
-                  groupValue: orderCount,
-                  onChanged: (value) {
-                    _updateCounts(false);
-                  },
-                ),
-                Text('No'),
-              ],
+            ElevatedButton(
+              onPressed: _showOrderDialog,
+              child: Text('Order Food'),
             ),
             SizedBox(height: 20),
             Text(
-              'No of Orders: $orderCount',
+              'Users who need food: $orderCount',
               style: TextStyle(fontSize: 16),
             ),
             SizedBox(height: 20),
