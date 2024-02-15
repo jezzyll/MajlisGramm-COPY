@@ -14,42 +14,12 @@ class StaffMember {
 }
 
 class OfficeStaffPage extends StatelessWidget {
-  //  data for staff members 
+  //  data for staff members
   final List<StaffMember> staffMembers = [
     StaffMember(
       name: 'FAIZAL WAFY',
       mobileNo: '9567464757',
-      photoUrl: 'https://t3.ftcdn.net/jpg/02/43/12/34/360_F_243123463_zTooub557xEWABDLk0jJklDyLSGl2jrr.jpg', 
-    ),
-    StaffMember(
-      name: 'BASITH WAFY',
-      mobileNo: '8757695864',
-      photoUrl: 'https://t3.ftcdn.net/jpg/02/99/04/20/360_F_299042079_vGBD7wIlSeNl7vOevWHiL93G4koMM967.jpg', 
-    ),
-    StaffMember(
-      name: 'VASIH WAFY',
-      mobileNo: '8757695864',
-      photoUrl: 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500', 
-    ),
-    StaffMember(
-      name: 'SHAFEEQ WAFY',
-      mobileNo: '8757695864',
-      photoUrl: 'https://img.freepik.com/premium-photo/thoughtful-male-employee-thinking-idea-while-sitting-desk-office_709984-7245.jpg?size=626&ext=jpg&ga=GA1.1.1413502914.1696723200&semt=ais', 
-    ),
-    StaffMember(
-      name: 'ASHRAF WAFY',
-      mobileNo: '8757695864',
-      photoUrl: 'https://t3.ftcdn.net/jpg/03/02/88/46/360_F_302884605_actpipOdPOQHDTnFtp4zg4RtlWzhOASp.jpg', 
-    ),
-    StaffMember(
-      name: 'SAEED HUDAWI',
-      mobileNo: '8757695864',
-      photoUrl: 'https://st4.depositphotos.com/1591576/20942/i/450/depositphotos_209420114-stock-photo-close-horizontal-portrait-stubble-bearded.jpg', 
-    ),
-    StaffMember(
-      name: 'RAHOOF HUDAWI',
-      mobileNo: '8757695864',
-      photoUrl: 'https://img.freepik.com/premium-photo/i-am-going-catch-you-stylish-beard-mustache-care-happy-face-beard-fashion-barber-handsome-smiling-guy-close-up-masculinity-concept-man-bearded-hipster-stylish-beard-grey-background_474717-91646.jpg?size=626&ext=jpg&ga=GA1.1.1826414947.1698883200&semt=ais', 
+      photoUrl: 'https://t3.ftcdn.net/jpg/02/43/12/34/360_F_243123463_zTooub557xEWABDLk0jJklDyLSGl2jrr.jpg',
     ),
     // Add more staff members as needed
   ];
@@ -64,23 +34,37 @@ class OfficeStaffPage extends StatelessWidget {
         itemCount: staffMembers.length,
         itemBuilder: (BuildContext context, int index) {
           final staffMember = staffMembers[index];
-          return _buildStaffContainer(context, staffMember);
+          return _buildStaffCard(context, staffMember);
         },
-      ),  
+      ),
     );
   }
 
-  Widget _buildStaffContainer(BuildContext context, StaffMember staffMember) {
-    return ListTile(
-      leading: CircleAvatar(
-        radius: 30,
-        backgroundImage: NetworkImage(staffMember.photoUrl),
+  Widget _buildStaffCard(BuildContext context, StaffMember staffMember) {
+    return Card(
+      elevation: 4,
+      margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      child: ListTile(
+        contentPadding: EdgeInsets.all(12),
+        leading: CircleAvatar(
+          radius: 30,
+          backgroundImage: NetworkImage(staffMember.photoUrl),
+        ),
+        title: Text(
+          staffMember.name,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        subtitle: Text(
+          'Mobile: ${staffMember.mobileNo}',
+          style: TextStyle(
+            fontSize: 14,
+          ),
+        ),
+        onTap: () => _showImageDialog(context, staffMember.photoUrl),
       ),
-      title: Text(staffMember.name),
-      subtitle: Text(staffMember.mobileNo),
-      onTap: () {
-        _showImageDialog(context, staffMember.photoUrl);
-      },
     );
   }
 
@@ -103,4 +87,15 @@ class OfficeStaffPage extends StatelessWidget {
       },
     );
   }
+}
+
+void main() {
+  runApp(MaterialApp(
+    home: OfficeStaffPage(),
+    theme: ThemeData(
+      primaryColor: Colors.blue,
+      hintColor: Colors.blueAccent,
+      fontFamily: 'Roboto',
+    ),
+  ));
 }
