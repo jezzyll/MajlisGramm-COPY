@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore package
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class CanteenOrderFood extends StatefulWidget {
@@ -9,8 +9,8 @@ class CanteenOrderFood extends StatefulWidget {
 }
 
 class _CanteenOrderFoodState extends State<CanteenOrderFood> {
-  int orderCount = 0;
-  int noOrderCount = 0;
+  late int orderCount;
+  late int noOrderCount;
 
   @override
   void initState() {
@@ -79,7 +79,7 @@ class _CanteenOrderFoodState extends State<CanteenOrderFood> {
                   value: true,
                   groupValue: orderCount,
                   onChanged: (value) {
-                    _updateCounts(value as bool);
+                    _updateCounts(true);
                   },
                 ),
                 Text('Yes'),
@@ -87,7 +87,7 @@ class _CanteenOrderFoodState extends State<CanteenOrderFood> {
                   value: false,
                   groupValue: orderCount,
                   onChanged: (value) {
-                    _updateCounts(value as bool);
+                    _updateCounts(false);
                   },
                 ),
                 Text('No'),
@@ -95,7 +95,7 @@ class _CanteenOrderFoodState extends State<CanteenOrderFood> {
             ),
             SizedBox(height: 20),
             Text(
-              'Order Count: $orderCount',
+              'No of Orders: $orderCount',
               style: TextStyle(fontSize: 16),
             ),
             SizedBox(height: 20),
