@@ -17,7 +17,7 @@ class StaffCookPage extends StatelessWidget {
   //  data for staff members
   final List<StaffMember> staffMembers = [
     StaffMember(
-      name: 'FAIZAL WAFY',
+      name: 'RAFEEQ',
       mobileNo: '9567464757',
       photoUrl: 'https://t3.ftcdn.net/jpg/02/43/12/34/360_F_243123463_zTooub557xEWABDLk0jJklDyLSGl2jrr.jpg',
     ),

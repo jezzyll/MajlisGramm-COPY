@@ -17,9 +17,9 @@ class StaffSecurityPage extends StatelessWidget {
   //  data for staff members
   final List<StaffMember> staffMembers = [
     StaffMember(
-      name: 'FAIZAL WAFY',
+      name: ':ALI KAKKA',
       mobileNo: '9567464757',
-      photoUrl: 'https://t3.ftcdn.net/jpg/02/43/12/34/360_F_243123463_zTooub557xEWABDLk0jJklDyLSGl2jrr.jpg',
+      photoUrl: 'https://static.vecteezy.com/system/resources/previews/006/847/961/large_2x/portrait-of-happy-senior-man-looking-at-camera-smiling-elderly-caucasian-old-man-photo.jpg',
     ),
     // Add more staff members as needed
   ];
