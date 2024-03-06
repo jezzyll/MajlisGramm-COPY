@@ -19,7 +19,7 @@ class StaffCookPage extends StatelessWidget {
     StaffMember(
       name: 'RAFEEQ',
       mobileNo: '9567464757',
-      photoUrl: 'https://t3.ftcdn.net/jpg/02/43/12/34/360_F_243123463_zTooub557xEWABDLk0jJklDyLSGl2jrr.jpg',
+      photoUrl: 'https://st4.depositphotos.com/2796781/21160/i/450/depositphotos_211605244-stock-photo-portrait-cheerful-amazed-african-american.jpg',
     ),
     // Add more staff members as needed
   ];
