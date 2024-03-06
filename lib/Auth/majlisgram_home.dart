@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_111_copy/Canteen/canteen_main_screen.dart';
 import 'package:flutter_application_111_copy/Home_BottomNav/user_profile.dart';
 import 'package:flutter_application_111_copy/Offiice/office_Home.dart';
+import 'package:flutter_application_111_copy/Staff/staffHome.dart';
 import 'package:flutter_application_111_copy/Union/union_activity.dart';
 import 'package:flutter_application_111_copy/Union/union_home.dart';
 
@@ -55,6 +56,10 @@ class _MajlisgramHomeState extends State<MajlisgramHome> {
           },
           onStaffTapped: () {
             // Navigate to Staff Page
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => StaffHomePage()),
+            );
           },
           onUnionTapped: () {
             Navigator.push(

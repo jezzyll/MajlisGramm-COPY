@@ -1,90 +1,97 @@
 import 'package:flutter/material.dart';
 
-// Define a simple data model for staff members
-class StaffMember {
-  final String name;
-  final String mobileNo;
-  final String photoUrl;
-
-  StaffMember({
-    required this.name,
-    required this.mobileNo,
-    required this.photoUrl,
-  });
+class OfficeStaffPage extends StatefulWidget {
+  @override
+  _OfficeStaffPageState createState() => _OfficeStaffPageState();
 }
 
-class OfficeStaffPage extends StatelessWidget {
-  //  data for staff members
-  final List<StaffMember> staffMembers = [
-    StaffMember(
-      name: 'FAIZAL WAFY',
-      mobileNo: '9567464757',
-      photoUrl: 'https://t3.ftcdn.net/jpg/02/43/12/34/360_F_243123463_zTooub557xEWABDLk0jJklDyLSGl2jrr.jpg',
-    ),
-    // Add more staff members as needed
-  ];
+class _OfficeStaffPageState extends State<OfficeStaffPage> {
+  String _name = 'Ashraf Wafy'; // Default name
+  String _bio = 'Contact Info: 93474785638'; // Default bio
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Staff Details'),
+        title: Text('Office Staff'),
       ),
-      body: ListView.builder(
-        itemCount: staffMembers.length,
-        itemBuilder: (BuildContext context, int index) {
-          final staffMember = staffMembers[index];
-          return _buildStaffCard(context, staffMember);
-        },
-      ),
-    );
-  }
-
-  Widget _buildStaffCard(BuildContext context, StaffMember staffMember) {
-    return Card(
-      elevation: 4,
-      margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      child: ListTile(
-        contentPadding: EdgeInsets.all(12),
-        leading: CircleAvatar(
-          radius: 30,
-          backgroundImage: NetworkImage(staffMember.photoUrl),
-        ),
-        title: Text(
-          staffMember.name,
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
+      body: Center(
+        child: Container(
+          padding: EdgeInsets.all(20.0),
+          width: MediaQuery.of(context).size.width * 0.8,
+          decoration: BoxDecoration(
+            color: Colors.grey[200],
+            borderRadius: BorderRadius.circular(15.0),
           ),
-        ),
-        subtitle: Text(
-          'Mobile: ${staffMember.mobileNo}',
-          style: TextStyle(
-            fontSize: 14,
-          ),
-        ),
-        onTap: () => _showImageDialog(context, staffMember.photoUrl),
-      ),
-    );
-  }
-
-  void _showImageDialog(BuildContext context, String imageUrl) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return Dialog(
-          child: Container(
-            width: 200,
-            height: 200,
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: NetworkImage(imageUrl),
-                fit: BoxFit.cover,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircleAvatar(
+                radius: 50.0,
+                backgroundImage: NetworkImage('https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.pexels.com%2Fsearch%2Fperson%2F&psig=AOvVaw1NAhDWP5ej36fJCtdx8d2L&ust=1709739306778000&source=images&cd=vfe&opi=89978449&ved=0CBMQjRxqFwoTCIDio7G53YQDFQAAAAAdAAAAABAE'),
+                // You can replace the AssetImage with NetworkImage if you have an online image URL
               ),
-            ),
+              SizedBox(height: 20.0),
+              TextField(
+                decoration: InputDecoration(
+                  labelText: 'Name',
+                  border: OutlineInputBorder(),
+                ),
+                onChanged: (value) {
+                  setState(() {
+                    _name = value;
+                  });
+                },
+              ),
+              SizedBox(height: 20.0),
+              TextField(
+                decoration: InputDecoration(
+                  labelText: 'Bio',
+                  border: OutlineInputBorder(),
+                ),
+                onChanged: (value) {
+                  setState(() {
+                    _bio = value;
+                  });
+                },
+              ),
+              SizedBox(height: 20.0),
+              ElevatedButton(
+                onPressed: () {
+                  // You can add functionality here to save the data to Firebase
+                  // For simplicity, I'm just displaying the data in a dialog
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text('Staff Details'),
+                        content: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text('Name: $_name'),
+                            SizedBox(height: 10.0),
+                            Text('Bio: $_bio'),
+                          ],
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: Text('Close'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+                child: Text('Save'),
+              ),
+            ],
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 }
@@ -92,10 +99,5 @@ class OfficeStaffPage extends StatelessWidget {
 void main() {
   runApp(MaterialApp(
     home: OfficeStaffPage(),
-    theme: ThemeData(
-      primaryColor: Colors.blue,
-      hintColor: Colors.blueAccent,
-      fontFamily: 'Roboto',
-    ),
   ));
 }

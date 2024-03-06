@@ -7,6 +7,10 @@ import 'package:flutter_application_111_copy/Offiice/office_non_staff.dart';
 import 'package:flutter_application_111_copy/Offiice/office_staff.dart';
 import 'package:flutter_application_111_copy/Offiice/office_stock.dart';
 import 'package:flutter_application_111_copy/Offiice/office_student.dart';
+import 'package:flutter_application_111_copy/Staff/staffHome.dart';
+import 'package:flutter_application_111_copy/Staff/staff_cook.dart';
+import 'package:flutter_application_111_copy/Staff/staff_security.dart';
+import 'package:flutter_application_111_copy/Staff/staff_teachers.dart';
 import 'package:flutter_application_111_copy/firebase_options.dart';
 import 'package:flutter_application_111_copy/Auth/home_screen.dart';
 import 'package:flutter_application_111_copy/Auth/splash_screen.dart';
@@ -43,6 +47,15 @@ class MyApp extends StatelessWidget {
       '/nonStaff': (context) => OfficeNonStaffPage(),
       '/feeDetails': (context) => OfficeStudentFee(),
       '/stock': (context) => OfficeStockPage(),
+
+      // StaffPage Routes
+      '/home': (context) => StaffHomePage(),
+      '/staff': (context) => StaffTeachersPage(),
+      '/nonStaff': (context) => OfficeNonStaffPage(),
+      '/StaffCook': (context) => StaffCookPage(),
+      '/StaffSecurity': (context) => StaffSecurityPage(),
+
+
       },
       
     );

@@ -1,5 +1,8 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:image_picker/image_picker.dart';
 
 class UnionGarden extends StatelessWidget {
   const UnionGarden({Key? key}) : super(key: key);
@@ -32,9 +35,10 @@ class Body extends StatefulWidget {
 }
 
 class _BodyState extends State<Body> {
-  // List to store data fetched from Firestore
-  List<String> committeeMembers = [];
-  List<String> newUpdates = [];
+  late File _chiefImageFile = File(''); // Initialize _chiefImageFile with an empty file path
+  late File _assistImageFile = File(''); // Initialize _assistImageFile with an empty file path
+  final TextEditingController _chiefNameController = TextEditingController();
+  final TextEditingController _assistNameController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +47,7 @@ class _BodyState extends State<Body> {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Text(
-            "Committee Members",
+            "Chief Member",
             style: TextStyle(
               color: Colors.red,
               fontWeight: FontWeight.bold,
@@ -55,204 +59,128 @@ class _BodyState extends State<Body> {
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
-              CircleAvatar(
-                radius: 70,
-                backgroundImage: AssetImage('assets/images/me.jpg'),
-              ),
+              _chiefImageFile != null
+                  ? CircleAvatar(
+                      radius: 70,
+                      backgroundImage: FileImage(_chiefImageFile),
+                    )
+                  : CircleAvatar(
+                      radius: 70,
+                      backgroundImage: AssetImage('assets/images/placeholder.jpg'),
+                    ),
               SizedBox(height: 5),
               ElevatedButton(
                 onPressed: () {
-                  _addCommitteeMember(1);
+                  _getImage(ImageSource.gallery, isChief: true);
                 },
-                child: Text('Add Committee'),
+                child: Text('Choose Image'),
+              ),
+              SizedBox(height: 5),
+              TextField(
+                controller: _chiefNameController,
+                decoration: InputDecoration(
+                  labelText: 'Name',
+                ),
+              ),
+              SizedBox(height: 10),
+              ElevatedButton(
+                onPressed: () async {
+                  String imageUrl = await _uploadImage(_chiefImageFile);
+                  await _addToFirestore(imageUrl, _chiefNameController.text);
+                },
+                child: Text('Add Member'),
               ),
             ],
+          ),
+        ),
+        SizedBox(height: 20),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            "Assistant Member",
+            style: TextStyle(
+              color: Colors.red,
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+            ),
           ),
         ),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
-              CircleAvatar(
-                radius: 70,
-                backgroundImage: AssetImage('assets/images/PSC1.jpg'),
-              ),
+              _assistImageFile != null
+                  ? CircleAvatar(
+                      radius: 70,
+                      backgroundImage: FileImage(_assistImageFile),
+                    )
+                  : CircleAvatar(
+                      radius: 70,
+                      backgroundImage: AssetImage('assets/images/placeholder.jpg'),
+                    ),
               SizedBox(height: 5),
               ElevatedButton(
                 onPressed: () {
-                  _addCommitteeMember(2);
+                  _getImage(ImageSource.gallery, isChief: false);
                 },
-                child: Text('Add Committee'),
+                child: Text('Choose Image'),
+              ),
+              SizedBox(height: 5),
+              TextField(
+                controller: _assistNameController,
+                decoration: InputDecoration(
+                  labelText: 'Name',
+                ),
+              ),
+              SizedBox(height: 10),
+              ElevatedButton(
+                onPressed: () async {
+                  String imageUrl = await _uploadImage(_assistImageFile);
+                  await _addToFirestore(imageUrl, _assistNameController.text);
+                },
+                child: Text('Add Member'),
               ),
             ],
           ),
-        ),
-        SizedBox(height: 20),
-        ElevatedButton(
-          onPressed: () async {
-            // Submit committee members to Firestore
-            await _submitToFirestore();
-            // Fetch and display data after submit
-            await _fetchDataFromFirestore();
-          },
-          child: Text('Submit'),
-        ),
-        SizedBox(height: 20),
-        // Display data fetched from Firestore
-        Column(
-          children: committeeMembers.map((member) => Text(member)).toList(),
-        ),
-        SizedBox(height: 20),
-        Text(
-          "NEW UPDATES",
-          style: TextStyle(
-            color: Colors.red,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
-        ),
-        SizedBox(height: 10),
-        Column(
-          children: newUpdates.map((update) => _buildUpdateContainer(update)).toList(),
-        ),
-        SizedBox(height: 20),
-        ElevatedButton(
-          onPressed: () {
-            // Navigate to AdditionalInformationPage
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => AdditionalInformationPage()),
-            ).then((value) {
-              // Update newUpdates after returning from AdditionalInformationPage
-              if (value != null) {
-                setState(() {
-                  newUpdates.add(value);
-                });
-              }
-            });
-          },
-          child: Text('Add'),
         ),
       ],
     );
   }
 
-  Widget _buildUpdateContainer(String update) {
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 5),
-      width: 300, // Fixed width
-      height: 100, // Fixed height
-      padding: EdgeInsets.all(8.0),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: SingleChildScrollView(
-        child: Text(
-          update,
-          style: TextStyle(fontSize: 16),
-        ),
-      ),
-    );
+  Future<void> _getImage(ImageSource source, {required bool isChief}) async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: source);
+
+    if (pickedFile != null) {
+      setState(() {
+        if (isChief) {
+          _chiefImageFile = File(pickedFile.path);
+        } else {
+          _assistImageFile = File(pickedFile.path);
+        }
+      });
+    }
   }
 
-  Future<void> _submitToFirestore() async {
-    // Submit committee members to Firestore
-    await FirebaseFirestore.instance.collection('committee_members').add({
-      'name1': 'Name 1',
-      'name2': 'Name 2',
+  Future<String> _uploadImage(File imageFile) async {
+    firebase_storage.Reference storageRef = firebase_storage.FirebaseStorage.instance
+        .ref()
+        .child('profile_images')
+        .child(DateTime.now().millisecondsSinceEpoch.toString() + '.jpg');
+
+    firebase_storage.UploadTask uploadTask = storageRef.putFile(imageFile);
+
+    firebase_storage.TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() => null);
+
+    String imageUrl = await taskSnapshot.ref.getDownloadURL();
+    return imageUrl;
+  }
+
+  Future<void> _addToFirestore(String imageUrl, String name) async {
+    await FirebaseFirestore.instance.collection('garden_members').add({
+      'name': name,
+      'image_url': imageUrl,
     });
-  }
-
-  Future<void> _fetchDataFromFirestore() async {
-    // Fetch data from Firestore and update the state
-    final snapshot = await FirebaseFirestore.instance.collection('committee_members').get();
-    setState(() {
-      committeeMembers =
-          snapshot.docs.map<String>((doc) => doc['name1'] + ', ' + doc['name2']).toList();
-    });
-  }
-
-  void _addCommitteeMember(int memberNumber) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text('Add Committee Member'),
-          content: TextFormField(
-            decoration: InputDecoration(
-              hintText: 'Enter name...',
-            ),
-            onChanged: (value) {
-              // Update UI or perform necessary actions
-            },
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () async {
-                // Add functionality to save committee member to Firestore or perform other actions
-                Navigator.pop(context);
-              },
-              child: Text('Save'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-}
-
-class AdditionalInformationPage extends StatelessWidget {
-  TextEditingController _additionalInfoController = TextEditingController();
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Additional Information'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          children: [
-            Expanded(
-              child: Container(
-                width: 400, // Fixed width
-                height: 100, // Fixed height
-                padding: EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: TextField(
-                  controller: _additionalInfoController,
-                  maxLines: null,
-                  decoration: InputDecoration(
-                    hintText: 'Enter text here...',
-                    border: InputBorder.none,
-                  ),
-                ),
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                await FirebaseFirestore.instance.collection('additionalInformation').add({
-                  'info': _additionalInfoController.text,
-                });
-                Navigator.pop(context, _additionalInfoController.text);
-              },
-              child: Text('Enter'),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }
 
