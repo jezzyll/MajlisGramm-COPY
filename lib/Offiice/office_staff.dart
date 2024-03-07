@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class OfficeStaffPage extends StatefulWidget {
   @override
@@ -7,8 +7,58 @@ class OfficeStaffPage extends StatefulWidget {
 }
 
 class _OfficeStaffPageState extends State<OfficeStaffPage> {
-  String _name = 'Ashraf Wafy'; // Default name
-  String _bio = 'Contact Info: 9475856363 Email: AshrafVp777@gmail.com'; // Default bio
+  late TextEditingController _nameController;
+  late TextEditingController _bioController;
+
+  late String _name;
+  late String _bio;
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController = TextEditingController();
+    _bioController = TextEditingController();
+    _loadDataFromFirestore();
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _bioController.dispose();
+    super.dispose();
+  }
+
+  void _loadDataFromFirestore() async {
+    try {
+      DocumentSnapshot<Map<String, dynamic>> snapshot =
+          await FirebaseFirestore.instance.collection('officer').doc('1').get();
+
+      setState(() {
+        _name = snapshot.data()!['name'] ?? '';
+        _bio = snapshot.data()!['bio'] ?? '';
+        _nameController.text = _name;
+        _bioController.text = _bio;
+      });
+    } catch (e) {
+      print('Error loading data: $e');
+    }
+  }
+
+  void _saveDataToFirestore() async {
+    try {
+      await FirebaseFirestore.instance.collection('officer').doc('1').set({
+        'name': _nameController.text,
+        'bio': _bioController.text,
+      });
+    } catch (e) {
+      print('Error saving data: $e');
+    }
+  }
+
+  void _changeOfficer() {
+    _saveDataToFirestore();
+    _loadDataFromFirestore();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +68,7 @@ class _OfficeStaffPageState extends State<OfficeStaffPage> {
       ),
       body: Center(
         child: Container(
-          padding: EdgeInsets.all(100.0),
+          padding: EdgeInsets.all(20.0),
           width: MediaQuery.of(context).size.width * 0.8,
           decoration: BoxDecoration(
             color: Colors.grey[200],
@@ -29,11 +79,12 @@ class _OfficeStaffPageState extends State<OfficeStaffPage> {
             children: [
               CircleAvatar(
                 radius: 50.0,
-                backgroundImage: NetworkImage("https://t3.ftcdn.net/jpg/02/99/04/20/360_F_299042079_vGBD7wIlSeNl7vOevWHiL93G4koMM967.jpg"),
-                // You can replace the AssetImage with NetworkImage if you have an online image URL
+                backgroundImage: NetworkImage(
+                    "https://t3.ftcdn.net/jpg/02/99/04/20/360_F_299042079_vGBD7wIlSeNl7vOevWHiL93G4koMM967.jpg"),
               ),
               SizedBox(height: 20.0),
               TextField(
+                controller: _nameController,
                 decoration: InputDecoration(
                   labelText: 'Name',
                   border: OutlineInputBorder(),
@@ -46,6 +97,7 @@ class _OfficeStaffPageState extends State<OfficeStaffPage> {
               ),
               SizedBox(height: 20.0),
               TextField(
+                controller: _bioController,
                 decoration: InputDecoration(
                   labelText: 'Bio',
                   border: OutlineInputBorder(),
@@ -58,36 +110,13 @@ class _OfficeStaffPageState extends State<OfficeStaffPage> {
               ),
               SizedBox(height: 20.0),
               ElevatedButton(
-                onPressed: () {
-                  // You can add functionality here to save the data to Firebase
-                  // For simplicity, I'm just displaying the data in a dialog
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text('Staff Details'),
-                        content: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text('Name: $_name'),
-                            SizedBox(height: 10.0),
-                            Text('Bio: $_bio'),
-                          ],
-                        ),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: Text('Close'),
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                },
+                onPressed: _saveDataToFirestore,
                 child: Text('Save'),
+              ),
+              SizedBox(height: 10.0),
+              ElevatedButton(
+                onPressed: _changeOfficer,
+                child: Text('Change Officer'),
               ),
             ],
           ),
