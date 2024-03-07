@@ -43,7 +43,7 @@ class MyApp extends StatelessWidget {
          // Create SignInPage separately
          // OfficePage Routes
       '/home': (context) => OfficeHomePage(),
-      '/staff': (context) => OfficeStaffPage(),
+      '/officestaff': (context) => OfficeStaffPage(),
       '/nonStaff': (context) => OfficeNonStaffPage(),
       '/feeDetails': (context) => OfficeStudentFee(),
       '/stock': (context) => OfficeStockPage(),

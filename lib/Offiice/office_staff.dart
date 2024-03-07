@@ -6,8 +6,8 @@ class OfficeStaffPage extends StatefulWidget {
 }
 
 class _OfficeStaffPageState extends State<OfficeStaffPage> {
-  String _name = 'Ashraf Wafy'; // Default name
-  String _bio = 'Contact Info: 93474785638'; // Default bio
+  String _name = 'John Doe'; // Default name
+  String _bio = 'Contact Info: xyz@example.com'; // Default bio
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +28,7 @@ class _OfficeStaffPageState extends State<OfficeStaffPage> {
             children: [
               CircleAvatar(
                 radius: 50.0,
-                backgroundImage: NetworkImage('https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.pexels.com%2Fsearch%2Fperson%2F&psig=AOvVaw1NAhDWP5ej36fJCtdx8d2L&ust=1709739306778000&source=images&cd=vfe&opi=89978449&ved=0CBMQjRxqFwoTCIDio7G53YQDFQAAAAAdAAAAABAE'),
+                backgroundImage: AssetImage('assets/avatar_placeholder.png'),
                 // You can replace the AssetImage with NetworkImage if you have an online image URL
               ),
               SizedBox(height: 20.0),

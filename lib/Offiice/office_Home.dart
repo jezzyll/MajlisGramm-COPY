@@ -16,7 +16,7 @@ class OfficeHomePage extends StatelessWidget {
         crossAxisCount: 2,
         children: [
           
-          _buildCard(context, 'Staff', '/staff'),
+          _buildCard(context, 'OfficeStaff', '/officestaff'),
           _buildCard(context, 'Non-Staff', '/nonStaff'),
           _buildCard(context, 'New Admission', '/newAdmission'),
           _buildCard(context, 'Fee Details', '/feeDetails'),
