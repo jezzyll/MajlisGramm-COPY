@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 
+
 class OfficeStaffPage extends StatefulWidget {
   @override
   _OfficeStaffPageState createState() => _OfficeStaffPageState();
 }
 
 class _OfficeStaffPageState extends State<OfficeStaffPage> {
-  String _name = 'John Doe'; // Default name
-  String _bio = 'Contact Info: xyz@example.com'; // Default bio
+  String _name = 'Ashraf Wafy'; // Default name
+  String _bio = 'Contact Info: 9475856363 Email: AshrafVp777@gmail.com'; // Default bio
 
   @override
   Widget build(BuildContext context) {
@@ -17,18 +18,18 @@ class _OfficeStaffPageState extends State<OfficeStaffPage> {
       ),
       body: Center(
         child: Container(
-          padding: EdgeInsets.all(20.0),
+          padding: EdgeInsets.all(100.0),
           width: MediaQuery.of(context).size.width * 0.8,
           decoration: BoxDecoration(
             color: Colors.grey[200],
-            borderRadius: BorderRadius.circular(15.0),
+            borderRadius: BorderRadius.circular(20.0),
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               CircleAvatar(
                 radius: 50.0,
-                backgroundImage: AssetImage('assets/avatar_placeholder.png'),
+                backgroundImage: NetworkImage("https://t3.ftcdn.net/jpg/02/99/04/20/360_F_299042079_vGBD7wIlSeNl7vOevWHiL93G4koMM967.jpg"),
                 // You can replace the AssetImage with NetworkImage if you have an online image URL
               ),
               SizedBox(height: 20.0),
