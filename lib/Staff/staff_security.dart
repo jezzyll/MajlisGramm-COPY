@@ -1,90 +1,166 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-// Define a simple data model for staff members
-class StaffMember {
-  final String name;
-  final String mobileNo;
-  final String photoUrl;
-
-  StaffMember({
-    required this.name,
-    required this.mobileNo,
-    required this.photoUrl,
-  });
+class StaffSecurityPage extends StatefulWidget {
+  @override
+  _OfficeStaffPageState createState() => _OfficeStaffPageState();
 }
 
-class StaffSecurityPage extends StatelessWidget {
-  //  data for staff members
-  final List<StaffMember> staffMembers = [
-    StaffMember(
-      name: 'ALI KAKKA',
-      mobileNo: '9567464757',
-      photoUrl: 'https://static.vecteezy.com/system/resources/previews/006/847/961/large_2x/portrait-of-happy-senior-man-looking-at-camera-smiling-elderly-caucasian-old-man-photo.jpg',
-    ),
-    // Add more staff members as needed
-  ];
+class _OfficeStaffPageState extends State<StaffSecurityPage> {
+  late TextEditingController _nameController;
+  late TextEditingController _bioController;
+
+  late String _name;
+  late String _bio;
+  bool _showInputFields = true; // Flag to control the visibility of input fields
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController = TextEditingController();
+    _bioController = TextEditingController();
+    _loadDataFromFirestore();
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _bioController.dispose();
+    super.dispose();
+  }
+
+  void _loadDataFromFirestore() async {
+    try {
+      DocumentSnapshot<Map<String, dynamic>> snapshot =
+          await FirebaseFirestore.instance.collection('officer').doc('1').get();
+
+      setState(() {
+        _name = snapshot.data()!['name'] ?? '';
+        _bio = snapshot.data()!['bio'] ?? '';
+        _nameController.text = _name;
+        _bioController.text = _bio;
+      });
+    } catch (e) {
+      print('Error loading data: $e');
+    }
+  }
+
+  void _saveDataToFirestore() async {
+    try {
+      await FirebaseFirestore.instance.collection('StaffSecurity').doc('1').set({
+        'name': _nameController.text,
+        'contact': _bioController.text,
+      });
+
+      // After saving, reload the data from Firestore
+      _loadDataFromFirestore();
+      setState(() {
+        _showInputFields = false; // Hide input fields after saving
+      });
+    } catch (e) {
+      print('Error saving data: $e');
+    }
+  }
+
+  void _changeOfficer() {
+    setState(() {
+      _showInputFields = true; // Show input fields when changing officer
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Staff Details'),
+        title: Text('Security'),
       ),
-      body: ListView.builder(
-        itemCount: staffMembers.length,
-        itemBuilder: (BuildContext context, int index) {
-          final staffMember = staffMembers[index];
-          return _buildStaffCard(context, staffMember);
-        },
-      ),
-    );
-  }
-
-  Widget _buildStaffCard(BuildContext context, StaffMember staffMember) {
-    return Card(
-      elevation: 4,
-      margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      child: ListTile(
-        contentPadding: EdgeInsets.all(12),
-        leading: CircleAvatar(
-          radius: 30,
-          backgroundImage: NetworkImage(staffMember.photoUrl),
-        ),
-        title: Text(
-          staffMember.name,
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
+      body: Center(
+        child: Container(
+          padding: EdgeInsets.all(20.0),
+          width: MediaQuery.of(context).size.width * 0.8,
+          decoration: BoxDecoration(
+            color: Colors.grey[200],
+            borderRadius: BorderRadius.circular(20.0),
           ),
-        ),
-        subtitle: Text(
-          'Mobile: ${staffMember.mobileNo}',
-          style: TextStyle(
-            fontSize: 14,
-          ),
-        ),
-        onTap: () => _showImageDialog(context, staffMember.photoUrl),
-      ),
-    );
-  }
-
-  void _showImageDialog(BuildContext context, String imageUrl) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return Dialog(
-          child: Container(
-            width: 200,
-            height: 200,
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: NetworkImage(imageUrl),
-                fit: BoxFit.cover,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircleAvatar(
+                radius: 50.0,
+                backgroundImage: NetworkImage(
+                    "https://cdn.openart.ai/stable_diffusion/b3c822d4202185d5fca9fb7029268a4901811998_2000x2000.webp"),
               ),
-            ),
+              SizedBox(height: 20.0),
+              if (_showInputFields)
+                Column(
+                  children: [
+                    TextField(
+                      controller: _nameController,
+                      decoration: InputDecoration(
+                        labelText: 'Name',
+                        border: OutlineInputBorder(),
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          _name = value;
+                        });
+                      },
+                    ),
+                    SizedBox(height: 20.0),
+                    TextField(
+                      controller: _bioController,
+                      decoration: InputDecoration(
+                        labelText: 'Bio',
+                        border: OutlineInputBorder(),
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          _bio = value;
+                        });
+                      },
+                    ),
+                    SizedBox(height: 20.0),
+                  ],
+                ),
+              ElevatedButton(
+                onPressed: _showInputFields ? _saveDataToFirestore : _changeOfficer,
+                child: Text(_showInputFields ? 'Save' : 'Change Security'),
+              ),
+              SizedBox(height: 10.0),
+              Container(
+                width: double.infinity,
+                padding: EdgeInsets.all(20.0),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10.0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 3,
+                      blurRadius: 5,
+                      offset: Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Name: $_name',
+                      style: TextStyle(fontSize: 18.0),
+                    ),
+                    SizedBox(height: 10.0),
+                    Text(
+                      'Bio: $_bio',
+                      style: TextStyle(fontSize: 18.0),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 }
@@ -92,10 +168,5 @@ class StaffSecurityPage extends StatelessWidget {
 void main() {
   runApp(MaterialApp(
     home: StaffSecurityPage(),
-    theme: ThemeData(
-      primaryColor: Colors.blue,
-      hintColor: Colors.blueAccent,
-      fontFamily: 'Roboto',
-    ),
   ));
 }

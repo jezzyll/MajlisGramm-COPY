@@ -12,6 +12,7 @@ class _OfficeStaffPageState extends State<OfficeStaffPage> {
 
   late String _name;
   late String _bio;
+  bool _showInputFields = true; // Flag to control the visibility of input fields
 
   @override
   void initState() {
@@ -50,14 +51,21 @@ class _OfficeStaffPageState extends State<OfficeStaffPage> {
         'name': _nameController.text,
         'bio': _bioController.text,
       });
+
+      // After saving, reload the data from Firestore
+      _loadDataFromFirestore();
+      setState(() {
+        _showInputFields = false; // Hide input fields after saving
+      });
     } catch (e) {
       print('Error saving data: $e');
     }
   }
 
   void _changeOfficer() {
-    _saveDataToFirestore();
-    _loadDataFromFirestore();
+    setState(() {
+      _showInputFields = true; // Show input fields when changing officer
+    });
   }
 
   @override
@@ -83,40 +91,71 @@ class _OfficeStaffPageState extends State<OfficeStaffPage> {
                     "https://t3.ftcdn.net/jpg/02/99/04/20/360_F_299042079_vGBD7wIlSeNl7vOevWHiL93G4koMM967.jpg"),
               ),
               SizedBox(height: 20.0),
-              TextField(
-                controller: _nameController,
-                decoration: InputDecoration(
-                  labelText: 'Name',
-                  border: OutlineInputBorder(),
+              if (_showInputFields)
+                Column(
+                  children: [
+                    TextField(
+                      controller: _nameController,
+                      decoration: InputDecoration(
+                        labelText: 'Name',
+                        border: OutlineInputBorder(),
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          _name = value;
+                        });
+                      },
+                    ),
+                    SizedBox(height: 20.0),
+                    TextField(
+                      controller: _bioController,
+                      decoration: InputDecoration(
+                        labelText: 'Bio',
+                        border: OutlineInputBorder(),
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          _bio = value;
+                        });
+                      },
+                    ),
+                    SizedBox(height: 20.0),
+                  ],
                 ),
-                onChanged: (value) {
-                  setState(() {
-                    _name = value;
-                  });
-                },
-              ),
-              SizedBox(height: 20.0),
-              TextField(
-                controller: _bioController,
-                decoration: InputDecoration(
-                  labelText: 'Bio',
-                  border: OutlineInputBorder(),
-                ),
-                onChanged: (value) {
-                  setState(() {
-                    _bio = value;
-                  });
-                },
-              ),
-              SizedBox(height: 20.0),
               ElevatedButton(
-                onPressed: _saveDataToFirestore,
-                child: Text('Save'),
+                onPressed: _showInputFields ? _saveDataToFirestore : _changeOfficer,
+                child: Text(_showInputFields ? 'Save' : 'Change Officer'),
               ),
               SizedBox(height: 10.0),
-              ElevatedButton(
-                onPressed: _changeOfficer,
-                child: Text('Change Officer'),
+              Container(
+                width: double.infinity,
+                padding: EdgeInsets.all(20.0),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10.0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 3,
+                      blurRadius: 5,
+                      offset: Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Name: $_name',
+                      style: TextStyle(fontSize: 18.0),
+                    ),
+                    SizedBox(height: 10.0),
+                    Text(
+                      'Bio: $_bio',
+                      style: TextStyle(fontSize: 18.0),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
