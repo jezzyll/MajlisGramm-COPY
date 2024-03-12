@@ -3,42 +3,42 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class StaffSecurityPage extends StatefulWidget {
   @override
-  _OfficeStaffPageState createState() => _OfficeStaffPageState();
+  _StaffSecurityPageState createState() => _StaffSecurityPageState();
 }
 
-class _OfficeStaffPageState extends State<StaffSecurityPage> {
+class _StaffSecurityPageState extends State<StaffSecurityPage> {
   late TextEditingController _nameController;
-  late TextEditingController _bioController;
+  late TextEditingController _contactController;
 
   late String _name;
-  late String _bio;
+  late String _contact;
   bool _showInputFields = true; // Flag to control the visibility of input fields
 
   @override
   void initState() {
     super.initState();
     _nameController = TextEditingController();
-    _bioController = TextEditingController();
+    _contactController = TextEditingController();
     _loadDataFromFirestore();
   }
 
   @override
   void dispose() {
     _nameController.dispose();
-    _bioController.dispose();
+    _contactController.dispose();
     super.dispose();
   }
 
   void _loadDataFromFirestore() async {
     try {
       DocumentSnapshot<Map<String, dynamic>> snapshot =
-          await FirebaseFirestore.instance.collection('officer').doc('1').get();
+          await FirebaseFirestore.instance.collection('StaffSecurity').doc('1').get();
 
       setState(() {
         _name = snapshot.data()!['name'] ?? '';
-        _bio = snapshot.data()!['bio'] ?? '';
+        _contact = snapshot.data()!['contact'] ?? '';
         _nameController.text = _name;
-        _bioController.text = _bio;
+        _contactController.text = _contact;
       });
     } catch (e) {
       print('Error loading data: $e');
@@ -49,7 +49,7 @@ class _OfficeStaffPageState extends State<StaffSecurityPage> {
     try {
       await FirebaseFirestore.instance.collection('StaffSecurity').doc('1').set({
         'name': _nameController.text,
-        'contact': _bioController.text,
+        'contact': _contactController.text,
       });
 
       // After saving, reload the data from Firestore
@@ -62,9 +62,9 @@ class _OfficeStaffPageState extends State<StaffSecurityPage> {
     }
   }
 
-  void _changeOfficer() {
+  void _changeSecurity() {
     setState(() {
-      _showInputFields = true; // Show input fields when changing officer
+      _showInputFields = true; // Show input fields when changing security
     });
   }
 
@@ -72,7 +72,7 @@ class _OfficeStaffPageState extends State<StaffSecurityPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Security'),
+        title: Text('Staff Security'),
       ),
       body: Center(
         child: Container(
@@ -108,14 +108,14 @@ class _OfficeStaffPageState extends State<StaffSecurityPage> {
                     ),
                     SizedBox(height: 20.0),
                     TextField(
-                      controller: _bioController,
+                      controller: _contactController,
                       decoration: InputDecoration(
-                        labelText: 'Bio',
+                        labelText: 'Contact',
                         border: OutlineInputBorder(),
                       ),
                       onChanged: (value) {
                         setState(() {
-                          _bio = value;
+                          _contact = value;
                         });
                       },
                     ),
@@ -123,7 +123,7 @@ class _OfficeStaffPageState extends State<StaffSecurityPage> {
                   ],
                 ),
               ElevatedButton(
-                onPressed: _showInputFields ? _saveDataToFirestore : _changeOfficer,
+                onPressed: _showInputFields ? _saveDataToFirestore : _changeSecurity,
                 child: Text(_showInputFields ? 'Save' : 'Change Security'),
               ),
               SizedBox(height: 10.0),
@@ -151,7 +151,7 @@ class _OfficeStaffPageState extends State<StaffSecurityPage> {
                     ),
                     SizedBox(height: 10.0),
                     Text(
-                      'Bio: $_bio',
+                      'Contact: $_contact',
                       style: TextStyle(fontSize: 18.0),
                     ),
                   ],

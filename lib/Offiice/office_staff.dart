@@ -1,5 +1,8 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class OfficeStaffPage extends StatefulWidget {
   @override
@@ -13,6 +16,7 @@ class _OfficeStaffPageState extends State<OfficeStaffPage> {
   late String _name;
   late String _bio;
   bool _showInputFields = true; // Flag to control the visibility of input fields
+  File? _imageFile; // Variable to store the selected image file
 
   @override
   void initState() {
@@ -20,6 +24,7 @@ class _OfficeStaffPageState extends State<OfficeStaffPage> {
     _nameController = TextEditingController();
     _bioController = TextEditingController();
     _loadDataFromFirestore();
+    _loadImage();
   }
 
   @override
@@ -68,6 +73,31 @@ class _OfficeStaffPageState extends State<OfficeStaffPage> {
     });
   }
 
+  Future<void> _pickImage(ImageSource source) async {
+    final pickedFile = await ImagePicker().pickImage(source: source);
+    if (pickedFile != null) {
+      setState(() {
+        _imageFile = File(pickedFile.path);
+        _saveImage(_imageFile!.path);
+      });
+    }
+  }
+
+  Future<void> _saveImage(String imagePath) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('imagePath', imagePath);
+  }
+
+  Future<void> _loadImage() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? imagePath = prefs.getString('imagePath');
+    if (imagePath != null) {
+      setState(() {
+        _imageFile = File(imagePath);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -85,10 +115,22 @@ class _OfficeStaffPageState extends State<OfficeStaffPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              CircleAvatar(
-                radius: 50.0,
-                backgroundImage: NetworkImage(
-                    "https://t3.ftcdn.net/jpg/02/99/04/20/360_F_299042079_vGBD7wIlSeNl7vOevWHiL93G4koMM967.jpg"),
+              GestureDetector(
+                onTap: () {
+                  _pickImage(ImageSource.gallery);
+                },
+                child: CircleAvatar(
+                  radius: 50.0,
+                  backgroundImage: _imageFile != null ? FileImage(_imageFile!) : null,
+                  backgroundColor: Colors.grey[300],
+                  child: _imageFile == null
+                      ? Icon(
+                          Icons.camera_alt,
+                          size: 40,
+                          color: Colors.white,
+                        )
+                      : null,
+                ),
               ),
               SizedBox(height: 20.0),
               if (_showInputFields)
