@@ -35,115 +35,68 @@ class Body extends StatefulWidget {
 }
 
 class _BodyState extends State<Body> {
-  late File _chiefImageFile = File(''); // Initialize _chiefImageFile with an empty file path
-  late File _assistImageFile = File(''); // Initialize _assistImageFile with an empty file path
+  late File _chiefImageFile;
+  late File _assistImageFile;
   final TextEditingController _chiefNameController = TextEditingController();
   final TextEditingController _assistNameController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _chiefImageFile = File(''); // Initialize _chiefImageFile with an empty file path
+    _assistImageFile = File(''); // Initialize _assistImageFile with an empty file path
+  }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
-            "Chief Member",
-            style: TextStyle(
-              color: Colors.red,
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
-            ),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              _chiefImageFile != null
-                  ? CircleAvatar(
-                      radius: 70,
-                      backgroundImage: FileImage(_chiefImageFile),
-                    )
-                  : CircleAvatar(
-                      radius: 70,
-                      backgroundImage: AssetImage('assets/images/placeholder.jpg'),
-                    ),
-              SizedBox(height: 5),
-              ElevatedButton(
-                onPressed: () {
-                  _getImage(ImageSource.gallery, isChief: true);
-                },
-                child: Text('Choose Image'),
-              ),
-              SizedBox(height: 5),
-              TextField(
-                controller: _chiefNameController,
-                decoration: InputDecoration(
-                  labelText: 'Name',
-                ),
-              ),
-              SizedBox(height: 10),
-              ElevatedButton(
-                onPressed: () async {
-                  String imageUrl = await _uploadImage(_chiefImageFile);
-                  await _addToFirestore(imageUrl, _chiefNameController.text);
-                },
-                child: Text('Add Member'),
-              ),
-            ],
-          ),
+        _buildMemberSection(
+          _chiefImageFile,
+          _chiefNameController,
+          isChief: true,
         ),
         SizedBox(height: 20),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
-            "Assistant Member",
-            style: TextStyle(
-              color: Colors.red,
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
-            ),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              _assistImageFile != null
-                  ? CircleAvatar(
-                      radius: 70,
-                      backgroundImage: FileImage(_assistImageFile),
-                    )
-                  : CircleAvatar(
-                      radius: 70,
-                      backgroundImage: AssetImage('assets/images/placeholder.jpg'),
-                    ),
-              SizedBox(height: 5),
-              ElevatedButton(
-                onPressed: () {
-                  _getImage(ImageSource.gallery, isChief: false);
-                },
-                child: Text('Choose Image'),
-              ),
-              SizedBox(height: 5),
-              TextField(
-                controller: _assistNameController,
-                decoration: InputDecoration(
-                  labelText: 'Name',
-                ),
-              ),
-              SizedBox(height: 10),
-              ElevatedButton(
-                onPressed: () async {
-                  String imageUrl = await _uploadImage(_assistImageFile);
-                  await _addToFirestore(imageUrl, _assistNameController.text);
-                },
-                child: Text('Add Member'),
-              ),
-            ],
-          ),
+        _buildMemberSection(
+          _assistImageFile,
+          _assistNameController,
+          isChief: false,
         ),
       ],
+    );
+  }
+
+  Widget _buildMemberSection(
+    File imageFile,
+    TextEditingController nameController, {
+    required bool isChief,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        children: [
+          CircleAvatar(
+            radius: 70,
+            backgroundImage: imageFile != null
+                ? FileImage(imageFile)
+                : AssetImage('assets/images/placeholder.jpg') as ImageProvider,
+          ),
+          SizedBox(height: 5),
+          ElevatedButton(
+            onPressed: () {
+              _getImage(ImageSource.gallery, isChief: isChief);
+            },
+            child: Text('Choose Image'),
+          ),
+          SizedBox(height: 5),
+          ElevatedButton(
+            onPressed: () {
+              _showAddMemberDialog(context, nameController, isChief: isChief);
+            },
+            child: Text('Add Member'),
+          ),
+        ],
+      ),
     );
   }
 
@@ -162,6 +115,52 @@ class _BodyState extends State<Body> {
     }
   }
 
+  Future<void> _showAddMemberDialog(
+    BuildContext context,
+    TextEditingController nameController, {
+    required bool isChief,
+  }) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Add Member'),
+          content: SingleChildScrollView(
+            child: Column(
+              children: [
+                TextField(
+                  controller: nameController,
+                  decoration: InputDecoration(
+                    labelText: 'Name',
+                  ),
+                ),
+                SizedBox(height: 10),
+                // Add more fields for additional member details if needed
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                String imageUrl = await _uploadImage(isChief ? _chiefImageFile : _assistImageFile);
+                await _addToFirestore(imageUrl, nameController.text);
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Future<String> _uploadImage(File imageFile) async {
     firebase_storage.Reference storageRef = firebase_storage.FirebaseStorage.instance
         .ref()
@@ -170,7 +169,7 @@ class _BodyState extends State<Body> {
 
     firebase_storage.UploadTask uploadTask = storageRef.putFile(imageFile);
 
-    firebase_storage.TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() => null);
+    firebase_storage.TaskSnapshot taskSnapshot = await uploadTask;
 
     String imageUrl = await taskSnapshot.ref.getDownloadURL();
     return imageUrl;

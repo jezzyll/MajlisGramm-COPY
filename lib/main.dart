@@ -11,7 +11,7 @@ import 'package:flutter_application_111_copy/Staff/staffHome.dart';
 import 'package:flutter_application_111_copy/Staff/staff_cook.dart';
 import 'package:flutter_application_111_copy/Staff/staff_security.dart';
 import 'package:flutter_application_111_copy/Staff/staff_teachers.dart';
-import 'package:flutter_application_111_copy/firebase_options.dart';
+import 'package:flutter_application_111_copy/firebase_options.dart';    
 import 'package:flutter_application_111_copy/Auth/home_screen.dart';
 import 'package:flutter_application_111_copy/Auth/splash_screen.dart';
 
@@ -19,10 +19,11 @@ import 'package:flutter_application_111_copy/Auth/splash_screen.dart';
 
 
 void main() async {
+  
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
-
+    
 );
   runApp(const MyApp());
 }
@@ -33,6 +34,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      
       
       initialRoute: '/splash',
       routes: {
