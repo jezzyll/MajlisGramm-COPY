@@ -43,8 +43,8 @@ class _BodyState extends State<Body> {
   @override
   void initState() {
     super.initState();
-    _chiefImageFile = File(''); // Initialize _chiefImageFile with an empty file path
-    _assistImageFile = File(''); // Initialize _assistImageFile with an empty file path
+    _chiefImageFile = File('');
+    _assistImageFile = File('');
   }
 
   @override
@@ -62,6 +62,8 @@ class _BodyState extends State<Body> {
           _assistNameController,
           isChief: false,
         ),
+        SizedBox(height: 20),
+        _buildMembersList(),
       ],
     );
   }
@@ -97,6 +99,36 @@ class _BodyState extends State<Body> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildMembersList() {
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance.collection('garden_members').snapshots(),
+      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        if (snapshot.hasError) {
+          return Text('Something went wrong');
+        }
+
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator();
+        }
+
+        return Column(
+          children: snapshot.data!.docs.map((DocumentSnapshot document) {
+            Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+            return Card(
+              child: ListTile(
+                leading: CircleAvatar(
+                  backgroundImage: NetworkImage(data['image_url']),
+                ),
+                title: Text(data['name']),
+                // Add more fields for additional member details if needed
+              ),
+            );
+          }).toList(),
+        );
+      },
     );
   }
 
