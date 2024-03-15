@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_application_111_copy/Canteen/canteen_main_screen.dart';
 import 'package:flutter_application_111_copy/Home_BottomNav/user_profile.dart';
 import 'package:flutter_application_111_copy/Offiice/office_Home.dart';
 import 'package:flutter_application_111_copy/Staff/staffHome.dart';
-import 'package:flutter_application_111_copy/Union/union_activity.dart';
 import 'package:flutter_application_111_copy/Union/union_home.dart';
+
+final List<String> imageUrls = [
+  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWw2pFaWpErThq2KE3QcR78LnElpJfCxfD_g&usqp=CAU',
+  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQFQzqiYlQX1SjI-ClavKcMupJZE3J6z_WH3FY7rNFkZWPELz8i587b-UXEQXLHolmHhyI&usqp=CAU',
+  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSepDC04oQVpXOT_Hg_ecrSMC4_5C_gwqV2A&usqp=CAU',
+];
 
 class MajlisgramHome extends StatefulWidget {
   const MajlisgramHome({Key? key}) : super(key: key);
@@ -21,8 +27,25 @@ class _MajlisgramHomeState extends State<MajlisgramHome> {
     return Scaffold(
       appBar: AppBar(
         title: Text("MajlisGram"),
+        backgroundColor: Colors.green,
       ),
-      body: _getBody(_selectedIndex),
+      body: Stack(
+        children: [
+          Positioned(
+            width: MediaQuery.of(context).size.width,
+            bottom: 0,
+            child: Opacity(
+              opacity: 0.6,          
+              child: Image.asset(
+                "assets/images/majlisgramHome.png", 
+                height: 400,
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          _getBody(_selectedIndex),
+        ],
+      ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
@@ -105,6 +128,8 @@ class MajlisgramHomePage extends StatelessWidget {
   final VoidCallback? onHostelTapped;
   final VoidCallback? onLibraryTapped;
   final VoidCallback? onCanteenTapped;
+  final VoidCallback? onBankTapped;
+  final VoidCallback? onMoreTapped;
 
   const MajlisgramHomePage({
     Key? key,
@@ -114,32 +139,46 @@ class MajlisgramHomePage extends StatelessWidget {
     this.onHostelTapped,
     this.onLibraryTapped,
     this.onCanteenTapped,
+    this.onBankTapped,
+    this.onMoreTapped,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Expanded(
-          flex: 2,
-          child: Container(
-            color: Colors.blue,
-            child: Center(
-              child: Text(
-                'Above Section',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          Container(
+            height: 200, // Set a specific height for the CarouselSlider
+            child: CarouselSlider(
+              items: imageUrls
+                  .map(
+                    (url) => ClipRRect(
+                      borderRadius: BorderRadius.circular(6),
+                      child: Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          Image.network(
+                            url,
+                            fit: BoxFit.cover,
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                  .toList(),
+              options: CarouselOptions(
+                autoPlay: true,
+                scrollPhysics: const BouncingScrollPhysics(),
+                aspectRatio: 2,
+                viewportFraction: 1,
               ),
             ),
           ),
-        ),
-        Divider(),
-        Expanded(
-          flex: 4,
-          child: Padding(
+          Divider(
+            color: Colors.white,
+          ),
+          Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -165,11 +204,18 @@ class MajlisgramHomePage extends StatelessWidget {
                     _buildSquare(Icons.fastfood, 'Canteen', onCanteenTapped),
                   ],
                 ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _buildSquare(Icons.account_balance, 'Bank', onBankTapped),
+                    _buildSquare(Icons.more_horiz, 'More', onMoreTapped),
+                  ],
+                ),
               ],
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -181,7 +227,7 @@ class MajlisgramHomePage extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Card(
-        color: Colors.lightBlue, // Changed card color
+        color: Color.fromARGB(255, 3, 167, 38), // Changed card color
         child: Container(
           width: 150,
           height: 100,
