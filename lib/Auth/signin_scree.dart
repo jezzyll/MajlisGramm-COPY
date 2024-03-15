@@ -44,18 +44,34 @@ class _LoginScreenState extends State<LoginScreen> {
       backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       appBar: AppBar(
         title: Text("Login"),
+        backgroundColor: Colors.green,
       ),
 
-      body: Center(
+      body: Stack(children: [
+        Positioned(
+                width: MediaQuery.of(context).size.width,
+                bottom: 35,
+                // right: 70,
+                child: Opacity(
+                  opacity: 0.5,
+                  child: Image.asset(
+                    "assets/images/login.png",
+                    height: 400,
+                    fit: BoxFit.cover,
+                  ),
+                )),
+        
+        Center(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SizedBox(height: 25,),
+            
             //Hello Again
             Text(
               "Hello Again",
                style: TextStyle(
                 fontWeight: FontWeight.bold,
-                fontSize: 24,
+                fontSize: 50,
                 ),
               ),
 
@@ -129,21 +145,35 @@ class _LoginScreenState extends State<LoginScreen> {
                   SizedBox(height: 20,),
             
                   ElevatedButton(
-                    onPressed: (){
-                      if (_formkey.currentState!.validate()){
-                        _handleLogin();
-                      }
-            
-                    }, child: 
-                    Text("Login")
-                    )
+               onPressed: () {
+                  if (_formkey.currentState!.validate()) {
+                    _handleLogin();
+               }
+           },
+          style: ElevatedButton.styleFrom(
+             foregroundColor: Colors.white, backgroundColor: Colors.green, // Text color
+              elevation: 5, // Shadow elevation
+             shape: RoundedRectangleBorder(
+               borderRadius: BorderRadius.circular(10), // Rounded corners
+              ),
+             padding: EdgeInsets.symmetric(vertical: 15, horizontal: 30), // Button padding
+              ),
+                 child: Text(
+                   "Login",
+               style: TextStyle(
+                  fontSize: 18, // Text size
+               fontWeight: FontWeight.bold, // Text weight
+                ),
+              ),
+             )
+
                 ],
                 ),
                 )
               ),
           ],
         ),
-      ),
+      ),],)
     );
   }
 }
