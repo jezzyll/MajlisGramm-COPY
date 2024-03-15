@@ -14,19 +14,15 @@ import 'package:flutter_application_111_copy/Staff/staff_teachers.dart';
 import 'package:flutter_application_111_copy/firebase_options.dart';    
 import 'package:flutter_application_111_copy/Auth/home_screen.dart';
 import 'package:flutter_application_111_copy/Auth/splash_screen.dart';
-
-
+import 'package:flutter/widgets.dart';
 
 
 void main() async {
-  
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-    
-);
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);  
   runApp(const MyApp());
 }
+
 class MyApp extends StatelessWidget { 
   const MyApp({super.key});
   // This widget is the root of your application.
