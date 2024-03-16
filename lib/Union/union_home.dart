@@ -95,7 +95,7 @@ class _UnionHomePageState extends State<UnionHomePage> {
                     final bio = member['bio'];
                     final imageUrl = member['image_url'];
                     return Card(
-  color: Colors.green, // Set background color to green
+  color: Color.fromARGB(255, 21, 106, 24), // Set background color to green
   child: Column(
     children: [
       ListTile(
@@ -126,7 +126,7 @@ class _UnionHomePageState extends State<UnionHomePage> {
                 );
               },
             ),
-            ElevatedButton(
+            ElevatedButton( 
               onPressed: () {
                 showDialog(
                   context: context,
@@ -215,7 +215,22 @@ class _UnionHomePageState extends State<UnionHomePage> {
                   },
                 );
               },
-              child: Text('Add Member'),
+              style: ElevatedButton.styleFrom(
+                            foregroundColor: Colors.white,
+                            backgroundColor: Colors.green,
+                            elevation: 5,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            padding: EdgeInsets.symmetric(
+                                vertical: 15, horizontal: 30),
+                          ),
+              child: Text('Add Member',
+              style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            ),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -231,7 +246,22 @@ class _UnionHomePageState extends State<UnionHomePage> {
                         ),
                       );
                     },
-                    child: Text('Sub-committee'),
+                    style: ElevatedButton.styleFrom(
+                            foregroundColor: Colors.white,
+                            backgroundColor: Colors.green,
+                            elevation: 5,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            padding: EdgeInsets.symmetric(
+                                vertical: 15, horizontal: 30),
+                          ),
+                    child: Text('Sub-committee',
+                    style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            ),
                   ),
                 ),
                 ElevatedButton(
@@ -245,7 +275,22 @@ class _UnionHomePageState extends State<UnionHomePage> {
                       setState(() {});
                     });
                   },
-                  child: Text('Activities'),
+                  style: ElevatedButton.styleFrom(
+                            foregroundColor: Colors.white,
+                            backgroundColor: Colors.green,
+                            elevation: 5,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            padding: EdgeInsets.symmetric(
+                                vertical: 15, horizontal: 30),
+                          ),
+                  child: Text('Activities',
+                  style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            ),
                 ),
               ],
             ),

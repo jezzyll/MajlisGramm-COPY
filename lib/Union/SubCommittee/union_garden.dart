@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UnionGarden extends StatelessWidget {
   const UnionGarden({Key? key}) : super(key: key);
@@ -14,7 +15,7 @@ class UnionGarden extends StatelessWidget {
       title: "UnionGarden",
       home: Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.teal,
+          backgroundColor: Colors.green,
           title: Center(child: Text("Garden")),
         ),
         body: SingleChildScrollView(
@@ -36,7 +37,7 @@ class Body extends StatefulWidget {
 
 class _BodyState extends State<Body> {
   late File _chiefImageFile;
-  late File _assistImageFile;
+  File? _assistImageFile; // Nullable File
   final TextEditingController _chiefNameController = TextEditingController();
   final TextEditingController _assistNameController = TextEditingController();
 
@@ -44,32 +45,63 @@ class _BodyState extends State<Body> {
   void initState() {
     super.initState();
     _chiefImageFile = File('');
-    _assistImageFile = File('');
+    _assistImageFile = null; // Initialize as null
+    _loadPersistedImages();
+  }
+
+  Future<void> _loadPersistedImages() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? chiefImagePath = prefs.getString('chiefImage');
+    String? assistImagePath = prefs.getString('assistImage');
+    if (chiefImagePath != null) {
+      setState(() {
+        _chiefImageFile = File(chiefImagePath);
+      });
+    }
+    if (assistImagePath != null) {
+      setState(() {
+        _assistImageFile = File(assistImagePath);
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
+        _buildSectionTitle('Leading Member'),
         _buildMemberSection(
           _chiefImageFile,
           _chiefNameController,
           isChief: true,
         ),
         SizedBox(height: 20),
+        _buildSectionTitle('Assistant Member'),
         _buildMemberSection(
           _assistImageFile,
           _assistNameController,
           isChief: false,
         ),
         SizedBox(height: 20),
+        _buildSectionTitle('Members'),
         _buildMembersList(),
       ],
     );
   }
 
+  Widget _buildSectionTitle(String title) {
+    return Container(
+      color: Colors.teal,
+      padding: const EdgeInsets.all(8.0),
+      child: Text(
+        title,
+        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+      ),
+    );
+  }
+
   Widget _buildMemberSection(
-    File imageFile,
+    File? imageFile,
     TextEditingController nameController, {
     required bool isChief,
   }) {
@@ -88,14 +120,56 @@ class _BodyState extends State<Body> {
             onPressed: () {
               _getImage(ImageSource.gallery, isChief: isChief);
             },
-            child: Text('Choose Image'),
+            style: ElevatedButton.styleFrom(
+              foregroundColor: Colors.white,
+              backgroundColor: Colors.green,
+              elevation: 30,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
+              padding: EdgeInsets.symmetric(
+                vertical: 15,
+                horizontal: 30,
+              ),
+            ),
+            child: Text(
+              isChief ? 'Choose Image of Leading Member' : 'Choose Image of Assistant Member',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
           SizedBox(height: 5),
           ElevatedButton(
             onPressed: () {
               _showAddMemberDialog(context, nameController, isChief: isChief);
             },
-            child: Text('Add Member'),
+            style: ElevatedButton.styleFrom(
+              foregroundColor: Colors.white,
+              backgroundColor: Colors.green,
+              elevation: 30,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
+              padding: EdgeInsets.symmetric(
+                vertical: 15,
+                horizontal: 30,
+              ),
+            ),
+            child: Text(
+              isChief ? 'Add Leading Member' : 'Add Assistant Member',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          SizedBox(height: 5),
+          // Display the entered name
+          Text(
+            nameController.text,
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
         ],
       ),
@@ -117,13 +191,19 @@ class _BodyState extends State<Body> {
         return Column(
           children: snapshot.data!.docs.map((DocumentSnapshot document) {
             Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+            String memberId = document.id;
             return Card(
               child: ListTile(
                 leading: CircleAvatar(
                   backgroundImage: NetworkImage(data['image_url']),
                 ),
                 title: Text(data['name']),
-                // Add more fields for additional member details if needed
+                trailing: IconButton(
+                  icon: Icon(Icons.delete),
+                  onPressed: () {
+                    _deleteMember(memberId);
+                  },
+                ),
               ),
             );
           }).toList(),
@@ -132,16 +212,24 @@ class _BodyState extends State<Body> {
     );
   }
 
+  Future<void> _deleteMember(String memberId) async {
+    await FirebaseFirestore.instance.collection('garden_members').doc(memberId).delete();
+  }
+
   Future<void> _getImage(ImageSource source, {required bool isChief}) async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: source);
 
     if (pickedFile != null) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String imagePath = pickedFile.path;
       setState(() {
         if (isChief) {
-          _chiefImageFile = File(pickedFile.path);
+          _chiefImageFile = File(imagePath);
+          prefs.setString('chiefImage', imagePath);
         } else {
-          _assistImageFile = File(pickedFile.path);
+          _assistImageFile = File(imagePath); // Update nullable file
+          prefs.setString('assistImage', imagePath);
         }
       });
     }
@@ -157,7 +245,7 @@ class _BodyState extends State<Body> {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Add Member'),
+          title: Text(isChief ? 'Add Leading Member' : 'Add Assistant Member'),
           content: SingleChildScrollView(
             child: Column(
               children: [
@@ -181,7 +269,7 @@ class _BodyState extends State<Body> {
             ),
             TextButton(
               onPressed: () async {
-                String imageUrl = await _uploadImage(isChief ? _chiefImageFile : _assistImageFile);
+                String imageUrl = await _uploadImage(isChief ? _chiefImageFile! : _assistImageFile!);
                 await _addToFirestore(imageUrl, nameController.text);
                 Navigator.of(context).pop();
               },

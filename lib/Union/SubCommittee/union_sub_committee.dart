@@ -14,103 +14,117 @@ void main() {
 }
 
 class UnionSubcommittee extends StatelessWidget {
- @override
- Widget build(BuildContext context) {
+  @override
+  Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
-          title: Text('Sub-committees'),
+          title: Text('Sub-Committees'),
+          backgroundColor: Colors.green,
         ),
+        
         body: ListView(
           children: [
-            ListTile(
-              title: Text('LIBRARY'),
+            _buildSubcommitteeTile(
+              title: 'FINE ARTS',
               onTap: () {
-                print('LITERARY selected');
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Unionfinearts()),
+                );
               },
             ),
-            ListTile(
-              title: Text('FINE ARTS'),
+            _buildSubcommitteeTile(
+              title: 'LITERARY',
               onTap: () {
-                Navigator.push(context, 
-            MaterialPageRoute(builder: (context) => Unionfinearts(),
-            ),
-            );
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => UnionLiterary()),
+                );
               },
             ),
-            ListTile(
-              title: Text('BANK'),
+            _buildSubcommitteeTile(
+              title: 'RESEARCH',
               onTap: () {
-                print('SOCIAL AFFAIRS selected');
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => UnionResearch()),
+                );
               },
             ),
-            ListTile(
-              title: Text('RESEARCH'),
+            _buildSubcommitteeTile(
+              title: 'GARDEN',
               onTap: () {
-                Navigator.push(context, 
-            MaterialPageRoute(builder: (context) => UnionResearch(),
-            ),
-            );
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => UnionGarden()),
+                );
               },
             ),
-            ListTile(
-              title: Text('GARDEN'),
+            _buildSubcommitteeTile(
+              title: 'SOCIAL AFFAIRS',
               onTap: () {
-                Navigator.push(context, 
-            MaterialPageRoute(builder: (context) => UnionGarden(),
-            ),
-            );
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => UnionSocialAffairs()),
+                );
               },
             ),
-             ListTile(
-              title: Text('LITERARY'),
+            _buildSubcommitteeTile(
+              title: 'BANK',
               onTap: () {
-                Navigator.push(context, 
-            MaterialPageRoute(builder: (context) => UnionLiterary(),
-            ),
-            );
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => UnionSocialAffairs()),
+                );
               },
             ),
-             ListTile(
-              title: Text('IT'),
+            
+            _buildSubcommitteeTile(
+              title: 'PRD',
               onTap: () {
-                Navigator.push(context, 
-            MaterialPageRoute(builder: (context) => UnionPrd(),
-            ),
-            );
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => UnionPrd()),
+                );
               },
             ),
-             ListTile(
-              title: Text('SOCIAL AFFAIRS'),
+            _buildSubcommitteeTile(
+              title: 'STORE',
               onTap: () {
-                Navigator.push(context, 
-            MaterialPageRoute(builder: (context) => UnionSocialAffairs(),
-            ),
-            );
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => UnionStore()),
+                );
               },
             ),
-             ListTile(
-              title: Text('STORE'),
+            _buildSubcommitteeTile(
+              title: 'SPORTS',
               onTap: () {
-                Navigator.push(context, 
-            MaterialPageRoute(builder: (context) => UnionStore(),
-            ),
-            );
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => UnionSports()),
+                );
               },
             ),
-             ListTile(
-              title: Text('SPORTS'),
-              onTap: () {
-                Navigator.push(context, 
-            MaterialPageRoute(builder: (context) => UnionSports(),
-            ),
-            );
-              },
-            ),
+            // Add other subcommittee tiles similarly
           ],
         ),
       ),
     );
- }
+  }
+
+  Widget _buildSubcommitteeTile({required String title, required VoidCallback onTap}) {
+    return Card(
+      color: Colors.green, // Set background color to green
+      child: ListTile(
+        title: Text(
+          title,
+          style: TextStyle(color: Colors.white),
+        ), // Set text color to white
+        onTap: onTap,
+      ),
+    );
+  }
 }
