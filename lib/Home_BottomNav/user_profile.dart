@@ -37,6 +37,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('User Profile'),
+        backgroundColor: Color.fromARGB(255, 157, 236, 155),
         actions: [
           IconButton(
             onPressed: () {
