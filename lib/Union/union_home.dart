@@ -6,15 +6,14 @@ import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
 
-class unionHomePage extends StatefulWidget {
-  const unionHomePage({Key? key}) : super(key: key);
+class UnionHomePage extends StatefulWidget {
+  const UnionHomePage({Key? key}) : super(key: key);
 
   @override
-  _UnionExecutiveCommitteeState createState() =>
-      _UnionExecutiveCommitteeState();
+  _UnionHomePageState createState() => _UnionHomePageState();
 }
 
-class _UnionExecutiveCommitteeState extends State<unionHomePage> {
+class _UnionHomePageState extends State<UnionHomePage> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _bioController = TextEditingController();
   late String _imageUrl = '';
@@ -54,6 +53,10 @@ class _UnionExecutiveCommitteeState extends State<unionHomePage> {
     });
   }
 
+  Future<void> _deleteMember(String memberId) async {
+    await FirebaseFirestore.instance.collection('executive_committee').doc(memberId).delete();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,7 +74,7 @@ class _UnionExecutiveCommitteeState extends State<unionHomePage> {
             ),
           ],
         ),
-        backgroundColor: Colors.teal,
+        backgroundColor: Colors.green,
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -91,13 +94,34 @@ class _UnionExecutiveCommitteeState extends State<unionHomePage> {
                     final name = member['name'];
                     final bio = member['bio'];
                     final imageUrl = member['image_url'];
-                    return ListTile(
-                      title: Text(name),
-                      subtitle: Text(bio),
-                      leading: CircleAvatar(
-                        backgroundImage: NetworkImage(imageUrl),
-                      ),
-                    );
+                    return Card(
+  color: Colors.green, // Set background color to green
+  child: Column(
+    children: [
+      ListTile(
+        contentPadding: EdgeInsets.symmetric(horizontal: 16.0), // Adjust padding
+        title: Text(name, style: TextStyle(color: Colors.white)), // Set text color to white
+        subtitle: Text(bio, style: TextStyle(color: Colors.white)), // Set text color to white
+        leading: CircleAvatar(
+          radius: 30, // Increase circle avatar size
+          backgroundImage: NetworkImage(imageUrl),
+        ),
+        trailing: IconButton(
+          icon: Icon(Icons.delete, color: Colors.white), // Set icon color to white
+          onPressed: () {
+            _deleteMember(member.id); // Pass the document ID to delete
+          },
+        ),
+      ),
+      Divider(
+        color: Colors.white, // Set divider color to white
+        thickness: 1.5, // Increase divider thickness
+        height: 0, // Set height to 0 to get default height
+      ),
+    ],
+  ),
+);
+
                   }).toList(),
                 );
               },
@@ -117,9 +141,9 @@ class _UnionExecutiveCommitteeState extends State<unionHomePage> {
                             children: [
                               _imageFile != null
                                   ? CircleAvatar(
-                                      backgroundImage: FileImage(_imageFile!),
-                                      radius: 50,
-                                    )
+                                backgroundImage: FileImage(_imageFile!),
+                                radius: 50,
+                              )
                                   : Container(),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -164,7 +188,7 @@ class _UnionExecutiveCommitteeState extends State<unionHomePage> {
                           onPressed: () async {
                             if (_imageFile != null) {
                               String imageUrl =
-                                  await _uploadImage(_imageFile!);
+                              await _uploadImage(_imageFile!);
                               setState(() {
                                 _imageUrl = imageUrl;
                               });
