@@ -87,7 +87,7 @@ class _MajlisgramHomeState extends State<MajlisgramHome> {
           onUnionTapped: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => unionHomePage()),
+              MaterialPageRoute(builder: (context) => UnionHomePage()),
             ).then((value) {
               setState(() {});
             });
