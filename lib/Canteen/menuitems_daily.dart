@@ -25,6 +25,7 @@ class _MenuItemsPageState extends State<MenuItemsPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Menu for ${widget.day}'),
+        backgroundColor: Colors.green,
       ),
       body: StreamBuilder<DocumentSnapshot>(
         stream: _menuCollection.doc(widget.day).snapshots(),
@@ -40,15 +41,19 @@ class _MenuItemsPageState extends State<MenuItemsPage> {
             return ListView.builder(
               itemCount: items.length,
               itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(items[index]),
-                  trailing: IconButton(
-                    icon: Icon(Icons.delete),
-                    onPressed: () {
-                      _deleteItemFromMenu(items[index]);
-                    },
+                return Card(
+                  color: Colors.green[100], // Set background color to green-related color
+                  child: ListTile(
+                    contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 20), // Adjust padding
+                    title: Text(items[index]),
+                    trailing: IconButton(
+                      icon: Icon(Icons.delete),
+                      onPressed: () {
+                        _deleteItemFromMenu(items[index]);
+                      },
+                    ),
+                    // Add more details or customize UI for each menu item here
                   ),
-                  // Add more details or customize UI for each menu item here
                 );
               },
             );
@@ -58,6 +63,7 @@ class _MenuItemsPageState extends State<MenuItemsPage> {
       floatingActionButton: FloatingActionButton(
         onPressed: _showAddItemDialog,
         tooltip: 'Add Item',
+        backgroundColor: Colors.green, // Set background color to green
         child: Icon(Icons.add),
       ),
     );
