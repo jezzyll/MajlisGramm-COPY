@@ -12,12 +12,22 @@ class CanteenMainScreen extends StatelessWidget {
       length: 3,
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Canteen App'),
+          title: Text('Majlis Canteen '),
+          backgroundColor: Colors.green,
           bottom: TabBar(
             tabs: [
-              Tab(icon: Icon(Icons.home_mini_rounded), text: 'Home'),
-              Tab(icon: Icon(Icons.fastfood_rounded), text: 'Menu'),
-              Tab(icon: Icon(Icons.book_rounded), text: 'Orders'),
+              Tab(
+                icon: Icon(Icons.home_mini_rounded, color: Colors.black), // Set icon color to black
+                text: 'Home',
+              ),
+              Tab(
+                icon: Icon(Icons.fastfood_rounded, color: Colors.black), // Set icon color to black
+                text: 'Menu',
+              ),
+              Tab(
+                icon: Icon(Icons.book_rounded, color: Colors.black), // Set icon color to black
+                text: 'Orders',
+              ),
             ],
           ),
         ),
