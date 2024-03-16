@@ -57,6 +57,7 @@ class _NotificationPageState extends State<UnionActivity> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Image Notification Page'),
+        backgroundColor: Colors.green,
       ),
       body: ListView.builder(
         itemCount: imageUrls.length,
@@ -71,6 +72,7 @@ class _NotificationPageState extends State<UnionActivity> {
         },
       ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.green,
         onPressed: _addImage,
         child: Icon(Icons.add),
       ),

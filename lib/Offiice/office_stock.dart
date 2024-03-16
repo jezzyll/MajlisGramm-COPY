@@ -22,16 +22,26 @@ class _OfficeStockPageState extends State<OfficeStockPage> {
     }
   }
 
+  Future<void> _deleteItem(DocumentSnapshot document) async {
+    try {
+      await _firestore.collection('office_stock').doc(document.id).delete();
+    } catch (e) {
+      print('Error deleting item: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Office Stock'),
+        backgroundColor: Colors.green,
       ),
       body: Column(
         children: [
           Container(
             padding: EdgeInsets.all(20.0),
+            color: Colors.green[100], // Added background color for input section
             child: Row(
               children: [
                 Expanded(
@@ -56,6 +66,18 @@ class _OfficeStockPageState extends State<OfficeStockPage> {
                     _stockController.clear();
                   },
                   child: Text('Add Stock'),
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.green, // Changed button color to green
+                    onPrimary: Colors.white, // Changed text color to white
+                    elevation: 5,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    padding: EdgeInsets.symmetric(
+                      vertical: 15,
+                      horizontal: 30,
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -69,15 +91,36 @@ class _OfficeStockPageState extends State<OfficeStockPage> {
                 }
 
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
+                  return Center(child: CircularProgressIndicator());
                 }
 
                 return ListView(
                   children: snapshot.data!.docs.map((DocumentSnapshot document) {
                     Map<String, dynamic> data = document.data() as Map<String, dynamic>;
-                    return ListTile(
-                      title: Text(data['item_name']),
-                      subtitle: Text('Stock: ${data['stock']}'),
+                    return Dismissible(
+                      key: Key(document.id),
+                      direction: DismissDirection.endToStart,
+                      background: Container(
+                        alignment: AlignmentDirectional.centerEnd,
+                        color: Colors.red,
+                        child: Padding(
+                          padding: EdgeInsets.fromLTRB(0.0, 0.0, 10.0, 0.0),
+                          child: Icon(
+                            Icons.delete,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      onDismissed: (direction) {
+                        _deleteItem(document);
+                      },
+                      child: Card(
+                        color: Colors.green[100], // Added background color for each tile
+                        child: ListTile(
+                          title: Text(data['item_name']),
+                          subtitle: Text('Stock: ${data['stock']}'),
+                        ),
+                      ),
                     );
                   }).toList(),
                 );

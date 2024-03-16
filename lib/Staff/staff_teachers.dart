@@ -1,5 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 // Define a simple data model for staff members
 class StaffMember {
@@ -27,22 +31,41 @@ class _StaffTeachersPageState extends State<StaffTeachersPage> {
 
   late TextEditingController nameController;
   late TextEditingController mobileController;
-  late TextEditingController photoUrlController;
+  late File? _image;
+  final picker = ImagePicker();
 
   @override
   void initState() {
     super.initState();
     nameController = TextEditingController();
     mobileController = TextEditingController();
-    photoUrlController = TextEditingController();
   }
 
   @override
   void dispose() {
     nameController.dispose();
     mobileController.dispose();
-    photoUrlController.dispose();
     super.dispose();
+  }
+
+  Future<void> getImage() async {
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    setState(() {
+      if (pickedFile != null) {
+        _image = File(pickedFile.path);
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+
+  Future uploadImage(File _image) async {
+    Reference storageReference =
+        FirebaseStorage.instance.ref().child('staff_photos/${_image.path}');
+    UploadTask uploadTask = storageReference.putFile(_image);
+    await uploadTask.whenComplete(() => null);
+    return storageReference.getDownloadURL();
   }
 
   @override
@@ -50,6 +73,7 @@ class _StaffTeachersPageState extends State<StaffTeachersPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Staff Details'),
+        backgroundColor: Colors.green,
       ),
       body: Column(
         children: [
@@ -84,9 +108,32 @@ class _StaffTeachersPageState extends State<StaffTeachersPage> {
               },
             ),
           ),
-          ElevatedButton(
-            onPressed: () => _showAddStaffDialog(context),
-            child: Text('Add Staff'),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 70.0),
+            child: ElevatedButton(
+              onPressed: () {
+                getImage().then((_) {
+                  if (_image != null) {
+                    uploadImage(_image!).then((url) {
+                      _showAddStaffDialog(context, url);
+                    });
+                  }
+                });
+              },
+              child: Text('Add Staff'),
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: Colors.green,
+                elevation: 30,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                padding: EdgeInsets.symmetric(
+                  vertical: 15,
+                  horizontal: 30,
+                ),
+              ),
+            ),
           ),
         ],
       ),
@@ -97,11 +144,14 @@ class _StaffTeachersPageState extends State<StaffTeachersPage> {
     return Card(
       elevation: 4,
       margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      color: Colors.green[100],
       child: ListTile(
         contentPadding: EdgeInsets.all(12),
         leading: CircleAvatar(
           radius: 30,
-          backgroundImage: NetworkImage(staffMember.photoUrl),
+          backgroundImage: staffMember.photoUrl.isNotEmpty
+              ? NetworkImage(staffMember.photoUrl)
+              : null,
         ),
         title: Text(
           staffMember.name,
@@ -124,7 +174,7 @@ class _StaffTeachersPageState extends State<StaffTeachersPage> {
     );
   }
 
-  void _showAddStaffDialog(BuildContext context) {
+  void _showAddStaffDialog(BuildContext context, String photoUrl) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -141,16 +191,18 @@ class _StaffTeachersPageState extends State<StaffTeachersPage> {
                 controller: mobileController,
                 decoration: InputDecoration(labelText: 'Mobile No.'),
               ),
-              TextField(
-                controller: photoUrlController,
-                decoration: InputDecoration(labelText: 'Photo URL'),
-              ),
+              _image != null
+                  ? CircleAvatar(
+                      radius: 30,
+                      backgroundImage: FileImage(_image!),
+                    )
+                  : SizedBox(),
             ],
           ),
           actions: [
             TextButton(
               onPressed: () {
-                _addStaff();
+                _addStaff(photoUrl);
                 Navigator.of(context).pop();
               },
               child: Text('Add'),
@@ -167,15 +219,17 @@ class _StaffTeachersPageState extends State<StaffTeachersPage> {
     );
   }
 
-  Future<void> _addStaff() {
+  Future<void> _addStaff(String photoUrl) {
     return staffTeachersCollection.add({
       'name': nameController.text,
       'mobileNo': mobileController.text,
-      'photoUrl': photoUrlController.text,
+      'photoUrl': photoUrl,
     }).then((value) {
       nameController.clear();
       mobileController.clear();
-      photoUrlController.clear();
+      setState(() {
+        _image = null;
+      });
     }).catchError((error) => print('Failed to add staff: $error'));
   }
 

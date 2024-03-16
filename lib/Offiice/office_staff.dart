@@ -103,13 +103,14 @@ class _OfficeStaffPageState extends State<OfficeStaffPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Office Staff'),
+        backgroundColor: Colors.green,
       ),
       body: Center(
         child: Container(
           padding: EdgeInsets.all(20.0),
           width: MediaQuery.of(context).size.width * 0.8,
           decoration: BoxDecoration(
-            color: Colors.grey[200],
+            color: Colors.green[100], // Changed background color to accent green
             borderRadius: BorderRadius.circular(20.0),
           ),
           child: Column(
@@ -167,13 +168,25 @@ class _OfficeStaffPageState extends State<OfficeStaffPage> {
               ElevatedButton(
                 onPressed: _showInputFields ? _saveDataToFirestore : _changeOfficer,
                 child: Text(_showInputFields ? 'Save' : 'Change Officer'),
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.green, // Changed button color to green
+                  elevation: 30,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  padding: EdgeInsets.symmetric(
+                    vertical: 15,
+                    horizontal: 30,
+                  ),
+                ),
               ),
               SizedBox(height: 10.0),
               Container(
                 width: double.infinity,
                 padding: EdgeInsets.all(20.0),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Color.fromARGB(255, 2, 50, 4), // Changed container background color to green
                   borderRadius: BorderRadius.circular(10.0),
                   boxShadow: [
                     BoxShadow(
@@ -189,12 +202,12 @@ class _OfficeStaffPageState extends State<OfficeStaffPage> {
                   children: [
                     Text(
                       'Name: $_name',
-                      style: TextStyle(fontSize: 18.0),
+                      style: TextStyle(fontSize: 18.0, color: Colors.white), // Changed text color to white
                     ),
                     SizedBox(height: 10.0),
                     Text(
                       'Bio: $_bio',
-                      style: TextStyle(fontSize: 18.0),
+                      style: TextStyle(fontSize: 18.0, color: Colors.white), // Changed text color to white
                     ),
                   ],
                 ),

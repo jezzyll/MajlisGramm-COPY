@@ -167,14 +167,34 @@ class _CanteenOrderFoodState extends State<CanteenOrderFood> {
                 ),
               ),
               SizedBox(height: 20),
-              Text(
-                'Users who need food: $orderCount',
-                style: TextStyle(fontSize: 16),
+              Container(
+                padding: EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: const Color.fromARGB(255, 137, 224, 182), // Set background color to accent green
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(
+                  'Users who need food: $orderCount',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black, // Text color
+                  ),
+                ),
               ),
               SizedBox(height: 20),
-              Text(
-                'Users who don\'t need food: $noOrderCount',
-                style: TextStyle(fontSize: 16),
+              Container(
+                padding: EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: const Color.fromARGB(255, 137, 224, 182), // Set background color to accent green
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(
+                  'Users who don\'t need food: $noOrderCount',
+                  style: TextStyle(fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                      color: Colors.black,),
+                ),
               ),
             ],
           ),

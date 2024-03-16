@@ -9,37 +9,46 @@ class StaffHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Majlis Office'),
+        title: Text('Majlis Staff'),
+        backgroundColor: Colors.green,
       ),
       
       body: GridView.count(
         crossAxisCount: 2,
         children: [
-          _buildCard(context, 'Staff', '/staff'),
-          _buildCard(context, 'Non-Staff', '/nonStaff'),
-          _buildCard(context, 'StaffSecurity', '/StaffSecurity'),
-          _buildCard(context, 'StaffCook', '/StaffCook'),
-          ]
+          _buildCard(context, 'Staff', '/staff', Icons.people, Color.fromARGB(255, 12, 62, 22)),
+          _buildCard(context, 'Non-Staff', '/nonStaff', Icons.person, Color.fromARGB(255, 12, 62, 22)),
+          _buildCard(context, 'Stock', '/stock', Icons.inventory, Color.fromARGB(255, 12, 62, 22)),
+          _buildCard(context, 'Student', '/student', Icons.school, Color.fromARGB(255, 12, 62, 22)),
+        ],
       ),
     );
   }
 
-  Widget _buildCard(BuildContext context, String title, String route) {
+  Widget _buildCard(BuildContext context, String title, String route, IconData iconData, Color color) {
     return GestureDetector(
       onTap: () {
         Navigator.pushNamed(context, route);
       },
       child: Card(
         margin: EdgeInsets.all(16.0),
-        child: Center(
-          child: Text(
-            title,
-            style: TextStyle(fontSize: 20.0),
-          ),
+        color: color,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              iconData,
+              size: 50.0,
+              color: Colors.white,
+            ),
+            SizedBox(height: 10.0),
+            Text(
+              title,
+              style: TextStyle(fontSize: 20.0, color: Colors.white),
+            ),
+          ],
         ),
       ),
     );
-    
+  }
 }
-}
-
