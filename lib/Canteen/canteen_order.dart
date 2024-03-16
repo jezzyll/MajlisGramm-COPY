@@ -102,7 +102,25 @@ class _CanteenOrderFoodState extends State<CanteenOrderFood> {
                         _updateCounts(_userChoice!);
                       }
                     },
-                    child: Text('OK'),
+                    child: Text(
+                      'OK',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      backgroundColor: Colors.green,
+                      elevation: 30,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      padding: EdgeInsets.symmetric(
+                        vertical: 15,
+                        horizontal: 30,
+                      ),
+                    ),
                   ),
                 ],
               );
@@ -118,6 +136,7 @@ class _CanteenOrderFoodState extends State<CanteenOrderFood> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Order Your Food"),
+        backgroundColor: Color.fromARGB(255, 162, 245, 165),
       ),
       body: Center(
         child: Padding(
@@ -127,7 +146,25 @@ class _CanteenOrderFoodState extends State<CanteenOrderFood> {
             children: [
               ElevatedButton(
                 onPressed: _showOrderDialog,
-                child: Text('Order Food'),
+                child: Text(
+                  'Order Food',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.green,
+                  elevation: 30,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  padding: EdgeInsets.symmetric(
+                    vertical: 15,
+                    horizontal: 30,
+                  ),
+                ),
               ),
               SizedBox(height: 20),
               Text(
