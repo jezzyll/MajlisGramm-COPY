@@ -70,7 +70,7 @@ class _WelcomePageState extends State<WelcomePage> {
                   ),
                   SizedBox(height: 5),
                   Text(
-                    "Super excited to have you on board with us at [Company Name].\n"
+                    "Super excited to have you on board with us at MajlisGram.\n"
                     "Can’t wait to dive into your projects and have some fun along the way. 😊",
                     style: TextStyle(
                       fontSize: 16,

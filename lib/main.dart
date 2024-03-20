@@ -9,7 +9,7 @@ import 'package:flutter_application_111_copy/Offiice/office_stock.dart';
 import 'package:flutter_application_111_copy/Offiice/office_student.dart';
 import 'package:flutter_application_111_copy/Staff/staffHome.dart';
 import 'package:flutter_application_111_copy/Staff/staff_cook.dart';
-import 'package:flutter_application_111_copy/Staff/staff_security.dart';
+import 'package:flutter_application_111_copy/Staff/staff_security.dart';  
 import 'package:flutter_application_111_copy/Staff/staff_teachers.dart';
 import 'package:flutter_application_111_copy/firebase_options.dart';    
 import 'package:flutter_application_111_copy/Auth/home_screen.dart';
