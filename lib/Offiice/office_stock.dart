@@ -67,8 +67,7 @@ class _OfficeStockPageState extends State<OfficeStockPage> {
                   },
                   child: Text('Add Stock'),
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.green, // Changed button color to green
-                    onPrimary: Colors.white, // Changed text color to white
+                    foregroundColor: Colors.white, backgroundColor: Colors.green, // Changed text color to white
                     elevation: 5,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15),

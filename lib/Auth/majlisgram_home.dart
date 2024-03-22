@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_application_111_copy/Canteen/canteen_main_screen.dart';
 import 'package:flutter_application_111_copy/Home_BottomNav/user_profile.dart';
+import 'package:flutter_application_111_copy/Hostel/hostel_home.dart';
 import 'package:flutter_application_111_copy/Offiice/office_Home.dart';
 import 'package:flutter_application_111_copy/Staff/staffHome.dart';
 import 'package:flutter_application_111_copy/Union/union_home.dart';
@@ -94,6 +95,12 @@ class _MajlisgramHomeState extends State<MajlisgramHome> {
           },
           onHostelTapped: () {
             // Navigate to Hostel Page
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => HostelHomePage()),
+            ).then((value) {
+              setState(() {});
+            });
           },
           onLibraryTapped: () {
             // Navigate to Library Page
