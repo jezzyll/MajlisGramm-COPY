@@ -1,7 +1,6 @@
 # MAJLISGRAM-flutter_application_111_copy
 
 
-
 MajlisGram Flutter project.
 
 ## Getting Started
