@@ -2,7 +2,7 @@
  
 MajlisGram Flutter project.    
 
-## Getting Started
+## Getting Started 
 
 This project is a starting point for a MajlisGram Flutter application.
 
